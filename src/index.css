@@ -2,4 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap");
+@layer base {
+  h1 {
+    @apply text-h1 font-h1 leading-h1 font-montserrat;
+  }
+  h2 {
+    @apply text-h2 font-h2 leading-h2 font-montserrat;
+  }
+  h3 {
+    @apply text-h3 font-h3 leading-h3 font-montserrat;
+  }
+  h5 {
+    @apply text-h5 font-h5 leading-h5 font-montserrat;
+  }
+}
