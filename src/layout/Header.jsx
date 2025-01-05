@@ -14,12 +14,12 @@ function Header() {
   return (
     <header>
       {/* Navbar */}
-      <div className="flex items-center justify-between bg-gray-100 px-4 py-2 shadow-md">
+      <div className="my-2 flex items-center justify-between bg-white px-4 py-2">
         {/* Company Name */}
-        <div className="text-lg font-bold text-gray-800">kNeat</div>
+        <div className="ml-2 text-3xl font-bold text-gray-800">kNeat</div>
 
         {/* Icons */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-6">
           {/* Profile */}
           <button className="text-gray-600 hover:text-gray-800">
             <ProfileIcon />
@@ -46,13 +46,13 @@ function Header() {
       </div>
 
       <div
-        className={`flex flex-col items-center gap-4 py-4 text-lg sm:gap-4 sm:text-xl ${isMenuOpen ? "block" : "hidden"}`}
+        className={`flex flex-col items-center py-4 text-3xl text-fgray sm:hidden ${isMenuOpen ? "block" : "hidden"}`}
       >
-        <ul className="mx-auto">
-          <li>Home</li>
-          <li>Product</li>
-          <li>Pricing</li>
-          <li>Contact</li>
+        <ul className="mx-auto text-center">
+          <li className="my-4">Home</li>
+          <li className="my-4">Product</li>
+          <li className="my-4">Pricing</li>
+          <li className="my-4">Contact</li>
         </ul>
       </div>
     </header>
