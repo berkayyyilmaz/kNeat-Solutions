@@ -1,31 +1,35 @@
 import React from "react";
+import men from "../assets/editorspick/men.png";
+import women from "../assets/editorspick/women.png";
+import accessories from "../assets/editorspick/accessories.png";
+import kid from "../assets/editorspick/kid.png";
 
 const EditorsPick = () => {
   const categories = [
     {
       title: "MEN",
-      image: "https://placehold.co/510x500",
+      image: men,
       className: "w-[510px] h-[500px]",
     },
     {
       title: "WOMEN",
-      image: "https://placehold.co/240x500",
+      image: women,
       className: "w-[240px] h-[500px]",
     },
     {
       title: "ACCESSORIES",
-      image: "https://placehold.co/240x240",
+      image: accessories,
       className: "w-[240px] h-[240px]",
     },
     {
       title: "KIDS",
-      image: "https://placehold.co/240x240",
+      image: kid,
       className: "w-[240px] h-[240px]",
     },
   ];
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="w-full bg-[#FAFAFA] p-4">
       <h1 className="mb-4 text-center text-2xl font-bold">EDITOR'S PICK</h1>
       <p className="mb-8 text-center text-gray-600">
         Problems trying to resolve the conflict between

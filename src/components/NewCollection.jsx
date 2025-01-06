@@ -8,7 +8,7 @@ import slider from "../assets/newcollection/hero1.png";
 const CustomPrevArrow = ({ onClick }) => (
   <button
     onClick={onClick}
-    className="absolute -left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full text-white transition-all"
+    className="absolute left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full text-white transition-all"
     aria-label="Previous slide"
   >
     <ChevronLeft className="h-12 w-12" />
@@ -18,7 +18,7 @@ const CustomPrevArrow = ({ onClick }) => (
 const CustomNextArrow = ({ onClick }) => (
   <button
     onClick={onClick}
-    className="absolute -right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full text-white transition-all"
+    className="absolute right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full text-white transition-all"
     aria-label="Next slide"
   >
     <ChevronRight className="h-12 w-12" />
@@ -38,7 +38,7 @@ export default function NewCollection() {
   };
 
   return (
-    <div className="mx-auto w-screen max-w-screen-2xl">
+    <div className="mx-auto w-screen max-w-screen-xl">
       <Slider {...settings}>
         <div className="relative mx-auto h-[753px] w-[416px] overflow-hidden">
           <img

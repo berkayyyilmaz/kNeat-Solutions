@@ -60,6 +60,14 @@ export default function BestSeller() {
       newPrice: "20.00",
       colors: ["#4A4E69", "#9A8C98", "#C9ADA7", "#F2E9E4"],
     },
+    {
+      image: "https://via.placeholder.com/348x427", // Replace with your image URL
+      title: "Personal Finance",
+      department: "Finance",
+      oldPrice: "35.00",
+      newPrice: "20.00",
+      colors: ["#4A4E69", "#9A8C98", "#C9ADA7", "#F2E9E4"],
+    },
   ];
 
   return (
@@ -71,7 +79,7 @@ export default function BestSeller() {
         </h3>
         <p>Problems trying to resolve the conflict between</p>
       </div>
-      <div className="flex flex-wrap justify-center gap-4">
+      <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-4">
         {products.map((product, index) => (
           <ProductCard
             key={index}
