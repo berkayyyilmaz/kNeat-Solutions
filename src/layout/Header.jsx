@@ -1,8 +1,17 @@
-import { ReactComponent as ProfileIcon } from "../assets/icons/profile.svg";
-import { ReactComponent as SearchIcon } from "../assets/icons/search.svg";
-import { ReactComponent as CartIcon } from "../assets/icons/cart.svg";
-import { ReactComponent as MenuIcon } from "../assets/icons/menu.svg";
 import { useState } from "react";
+import {
+  Facebook,
+  Instagram,
+  Mail,
+  Menu,
+  Phone,
+  Search,
+  ShoppingCart,
+  Twitter,
+  User,
+  Youtube,
+} from "lucide-react";
+import { li } from "react-router-dom/cjs/react-router-dom";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,7 +23,7 @@ function Header() {
   return (
     <header>
       {/* Navbar */}
-      <div className="my-2 flex items-center justify-between bg-white px-4 py-2">
+      <div className="my-2 flex items-center justify-between bg-white px-4 py-2 sm:hidden">
         {/* Company Name */}
         <div className="ml-2 text-3xl font-bold text-gray-800">kNeat</div>
 
@@ -22,17 +31,17 @@ function Header() {
         <div className="flex items-center space-x-6">
           {/* Profile */}
           <button className="text-gray-600 hover:text-gray-800">
-            <ProfileIcon />
+            <User />
           </button>
 
           {/* Search */}
           <button className="text-gray-600 hover:text-gray-800">
-            <SearchIcon />
+            <Search />
           </button>
 
           {/* Cart */}
           <button className="text-gray-600 hover:text-gray-800">
-            <CartIcon />
+            <ShoppingCart />
           </button>
 
           {/* Menu */}
@@ -40,7 +49,7 @@ function Header() {
             className="text-gray-600 hover:text-gray-800 sm:hidden"
             onClick={toggleMenu}
           >
-            <MenuIcon />
+            <Menu />
           </button>
         </div>
       </div>
@@ -54,6 +63,64 @@ function Header() {
           <li className="my-4">Pricing</li>
           <li className="my-4">Contact</li>
         </ul>
+      </div>
+      {/* Geniş Ekran Header'ı */}
+      <div className="hidden sm:block">
+        {/* Contact Header */}
+        <div className="text-align-center hidden justify-between bg-headerBlue px-10 py-4 text-white md:flex">
+          {/* Contact Info */}
+          <div className="flex gap-6 font-bold">
+            <div className="flex gap-2">
+              <Phone color="#ffffff" />
+              <h6>(225) 555-0118</h6>
+            </div>
+            <div className="flex gap-2">
+              <Mail color="#ffffff" />
+              <h6>berkay@kneat.com</h6>
+            </div>
+          </div>
+          {/* Message */}
+          <h6>Follow Us and get a chance to win 80% off</h6>
+          {/* Social Media */}
+          <div className="flex items-center gap-4">
+            <h6>Follow Us:</h6>
+            <Instagram color="#ffffff" />
+            <Youtube color="#ffffff" />
+            <Facebook color="#ffffff" />
+            <Twitter color="#ffffff" />
+          </div>
+        </div>
+        {/* Navbar */}
+        <div className="flex grow items-center justify-start bg-white px-10 py-6">
+          {/* Sol tarafa hizalanan logo */}
+          <div className="ml-2 text-3xl font-bold text-gray-800">kNeat</div>
+
+          {/* Ortadaki nav öğeleri */}
+          <nav className="ml-36 flex items-center text-fgray">
+            <ul className="flex gap-6 text-h6 font-bold">
+              <li>Home</li>
+              <li>Shop</li>
+              <li>About</li>
+              <li>Blog</li>
+              <li>Contact</li>
+              <li>Pages</li>
+            </ul>
+          </nav>
+
+          {/* Sağdaki ikonlar */}
+          <div className="ml-auto hidden items-center space-x-6 text-[#23A6F0] md:flex">
+            <button className="flex gap-2 hover:text-gray-800">
+              <User />
+              <h6>Login / Register</h6>
+            </button>
+            <button className="hover:text-gray-800">
+              <Search />
+            </button>
+            <button className="hover:text-gray-800">
+              <ShoppingCart />
+            </button>
+          </div>
+        </div>
       </div>
     </header>
   );

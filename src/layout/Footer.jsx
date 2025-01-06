@@ -1,7 +1,6 @@
 import React from "react";
-import { ReactComponent as FacebookIcon } from "../assets/icons/facebook.svg";
-import { ReactComponent as TwitterIcon } from "../assets/icons/twitter.svg";
-import { ReactComponent as InstagramIcon } from "../assets/icons/instagram.svg";
+
+import { Facebook, Instagram, Twitter } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -10,13 +9,13 @@ export default function Footer() {
         <div className="font-bold">kneat</div>
         <div className="flex space-x-4">
           <button>
-            <FacebookIcon />
+            <Facebook />
           </button>
           <button>
-            <TwitterIcon />
+            <Twitter />
           </button>
           <button>
-            <InstagramIcon />
+            <Instagram />
           </button>
         </div>
       </div>

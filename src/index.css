@@ -4,15 +4,18 @@
 
 @layer base {
   h1 {
-    @apply text-h1 font-h1 leading-h1 font-montserrat;
+    @apply font-montserrat text-h1 font-h1 leading-h1;
   }
   h2 {
-    @apply text-h2 font-h2 leading-h2 font-montserrat;
+    @apply font-montserrat text-h2 font-h2 leading-h2;
   }
   h3 {
-    @apply text-h3 font-h3 leading-h3 font-montserrat;
+    @apply font-montserrat text-h3 font-h3 leading-h3;
   }
   h5 {
-    @apply text-h5 font-h5 leading-h5 font-montserrat;
+    @apply font-montserrat text-h5 font-h5 leading-h5;
+  }
+  h6 {
+    @apply font-h6 leading-h6 font-montserrat text-h6;
   }
 }

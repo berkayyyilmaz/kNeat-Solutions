@@ -6,6 +6,7 @@ module.exports = {
         primary: "#FF7B47",
         secondary: "#0D5C63",
         fgray: "#737373",
+        headerBlue: "#252B42",
       },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"], // Montserrat fontu
@@ -23,12 +24,14 @@ module.exports = {
         h2: "600",
         h3: "500",
         h5: "700",
+        h6: "700",
       },
       lineHeight: {
         h1: "1.2",
         h2: "1.3",
         h3: "1.4",
         h5: "24px",
+        h6: "20px",
       },
     },
   },
