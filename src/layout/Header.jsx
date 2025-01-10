@@ -22,10 +22,10 @@ function Header() {
 
   return (
     <header>
-      {/* Navbar */}
+      {/* Mobile Navbar */}
       <div className="my-2 flex items-center justify-between bg-white px-4 py-2 sm:hidden">
         {/* Company Name */}
-        <div className="ml-2 text-3xl font-bold text-gray-800">kNeat</div>
+        <div className="text-3xl font-bold text-gray-800">kNeat</div>
 
         {/* Icons */}
         <div className="flex items-center space-x-6">
@@ -53,7 +53,7 @@ function Header() {
           </button>
         </div>
       </div>
-
+      {/* Mobile Menu */}
       <div
         className={`flex flex-col items-center py-4 text-3xl text-fgray sm:hidden ${isMenuOpen ? "block" : "hidden"}`}
       >
@@ -64,6 +64,7 @@ function Header() {
           <li className="my-4">Contact</li>
         </ul>
       </div>
+
       {/* Geniş Ekran Header'ı */}
       <div className="hidden sm:block">
         {/* Contact Header */}
@@ -93,32 +94,36 @@ function Header() {
         {/* Navbar */}
         <div className="flex grow items-center justify-start bg-white px-10 py-6">
           {/* Sol tarafa hizalanan logo */}
-          <div className="ml-2 text-3xl font-bold text-gray-800">kNeat</div>
+          <div className="ml-2 mr-24 text-3xl font-bold text-gray-800 lg:mr-36">
+            kNeat
+          </div>
+          {/* Orta kısımdaki nav ve sağdaki ikonlar */}
+          <div className="flex flex-grow items-center">
+            {/* Ortadaki nav öğeleri */}
+            <nav className="flex items-center text-fgray">
+              <ul className="flex gap-6 text-h6 font-bold">
+                <li>Home</li>
+                <li>Shop</li>
+                <li>About</li>
+                <li>Blog</li>
+                <li>Contact</li>
+                <li>Pages</li>
+              </ul>
+            </nav>
 
-          {/* Ortadaki nav öğeleri */}
-          <nav className="ml-36 flex items-center text-fgray">
-            <ul className="flex gap-6 text-h6 font-bold">
-              <li>Home</li>
-              <li>Shop</li>
-              <li>About</li>
-              <li>Blog</li>
-              <li>Contact</li>
-              <li>Pages</li>
-            </ul>
-          </nav>
-
-          {/* Sağdaki ikonlar */}
-          <div className="ml-auto hidden items-center space-x-6 text-[#23A6F0] md:flex">
-            <button className="flex gap-2 hover:text-gray-800">
-              <User />
-              <h6>Login / Register</h6>
-            </button>
-            <button className="hover:text-gray-800">
-              <Search />
-            </button>
-            <button className="hover:text-gray-800">
-              <ShoppingCart />
-            </button>
+            {/* Sağdaki ikonlar */}
+            <div className="ml-auto hidden items-center space-x-6 text-[#23A6F0] md:flex">
+              <button className="flex gap-2 hover:text-gray-800">
+                <User />
+                <h6 className="hidden lg:block">Login / Register</h6>
+              </button>
+              <button className="hover:text-gray-800">
+                <Search />
+              </button>
+              <button className="hover:text-gray-800">
+                <ShoppingCart />
+              </button>
+            </div>
           </div>
         </div>
       </div>
