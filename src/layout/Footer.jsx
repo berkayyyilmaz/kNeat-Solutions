@@ -1,12 +1,12 @@
 import React from "react";
-
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import { footerInfo } from "../data/footerInfo";
 
 export default function Footer() {
   return (
-    <div>
-      <div className="flex h-32 flex-col justify-center gap-4 bg-[#FAFAFA] pl-10 sm:flex-row sm:items-center sm:justify-between sm:px-32">
-        <div className="font-bold">kneat</div>
+    <div className="bg-[#FAFAFA]">
+      <div className="flex h-32 flex-col justify-center gap-4 pl-10 sm:flex-row sm:items-center sm:justify-evenly">
+        <div className="ml-2 text-3xl font-bold text-gray-800">kNeat</div>
         <div className="flex space-x-4">
           <button>
             <Facebook />
@@ -20,49 +20,34 @@ export default function Footer() {
         </div>
       </div>
       <div className="px-10 py-12">
-        <div className="flex w-full flex-col flex-wrap sm:flex-row sm:justify-center sm:gap-32">
-          <div className="mb-4">
-            <h5 className="mb-4">Company Info</h5>
-            <p className="text">About Us</p>
-            <p>Carrier</p>
-            <p>We are Hiring</p>
-            <p>Blog</p>
-          </div>
-          <div className="mb-4">
-            <h5 className="mb-4">Company Info</h5>
-            <p className="text">About Us</p>
-            <p>Carrier</p>
-            <p>We are Hiring</p>
-            <p>Blog</p>
-          </div>
-          <div className="mb-4">
-            <h5 className="mb-4">Company Info</h5>
-            <p className="text">About Us</p>
-            <p>Carrier</p>
-            <p>We are Hiring</p>
-            <p>Blog</p>
-          </div>
-          <div className="mb-4">
-            <h5 className="mb-4">Company Info</h5>
-            <p className="text">About Us</p>
-            <p>Carrier</p>
-            <p>We are Hiring</p>
-            <p>Blog</p>
-          </div>
-          <div className="mb-4">
-            <h5 className="mb-4">Company Info</h5>
-            <p className="text">About Us</p>
-            <p>Carrier</p>
-            <p>We are Hiring</p>
-            <p>Blog</p>
-          </div>
-          <div className="mb-4">
-            <h5>Get In Touch</h5>
-            input
+        <div className="mx-auto flex w-full max-w-screen-xl flex-col sm:flex-row sm:justify-center sm:gap-32">
+          {footerInfo.map((section, index) => (
+            <div key={index} className="mb-4">
+              <h5 className="mb-4">{section.title}</h5>
+              {section.links.map((link, idx) => (
+                <p key={idx} className="text">
+                  {link}
+                </p>
+              ))}
+            </div>
+          ))}
+          <div className="mb-4 sm:mb-0">
+            <h5 className="mb-4">Get In Touch</h5>
+            <div className="flex">
+              <input
+                className="w-52 rounded-l-lg border p-4 focus:rounded-l-lg focus:rounded-r-none focus:border-secondary focus:outline-none focus:ring-secondary"
+                placeholder="Your email"
+              />
+              <button className="w-28 rounded-r-lg bg-secondary px-2 text-white">
+                Subscribe
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      <div></div>
+      <h4 className="flex justify-center py-10 font-bold text-primary">
+        Stargazer Inc.
+      </h4>
     </div>
   );
 }

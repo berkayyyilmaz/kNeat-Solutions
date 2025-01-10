@@ -12,7 +12,7 @@ const ProductCard = ({
     <div className="w-64 rounded-lg bg-white p-4">
       {/* Product Image */}
       <div className="relative">
-        <img src={image} alt={title} className="h-128 w-full object-cover" />
+        <img src={image} alt={title} className="h-96 w-full object-cover" />
       </div>
       {/* Product Info */}
       <div className="mt-4 text-center">
