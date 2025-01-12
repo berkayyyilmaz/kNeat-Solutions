@@ -94,7 +94,7 @@ function Header() {
         {/* Navbar */}
         <div className="flex grow items-center justify-start bg-white px-10 py-6">
           {/* Sol tarafa hizalanan logo */}
-          <div className="ml-2 mr-24 text-3xl font-bold text-gray-800 lg:mr-36">
+          <div className="ml-2 mr-8 text-3xl font-bold text-gray-800 lg:mr-36">
             kNeat
           </div>
           {/* Orta kısımdaki nav ve sağdaki ikonlar */}

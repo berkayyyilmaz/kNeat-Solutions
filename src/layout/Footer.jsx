@@ -5,9 +5,9 @@ import { footerInfo } from "../data/footerInfo";
 export default function Footer() {
   return (
     <div>
-      <div className="w-full bg-[#FAFAFA] px-10 sm:px-48">
-        <div className="flex h-32 max-w-[1050px] flex-col justify-center gap-4 bg-[#FAFAFA] sm:mx-auto sm:flex-row sm:items-center sm:justify-between">
-          <div className="ml-2 text-3xl font-bold text-gray-800">kNeat</div>
+      <div className="bg-[#FAFAFA]">
+        <div className="container flex flex-col items-start justify-between p-4 sm:flex-row sm:items-center">
+          <div className="text-3xl font-bold text-gray-800">kNeat</div>
           <div className="flex space-x-4">
             <button>
               <Facebook />
@@ -21,7 +21,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="w-full px-0 sm:px-48">
+      <div className="container mx-auto">
         <div className="px-10 py-12 sm:px-0">
           <div className="flex max-w-screen-xl flex-col flex-wrap sm:mx-auto sm:flex-row sm:justify-start sm:gap-16 xl:flex-nowrap">
             {footerInfo.map((section, index) => (

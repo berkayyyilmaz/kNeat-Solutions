@@ -16,6 +16,10 @@
     @apply font-montserrat text-h5 font-h5 leading-h5;
   }
   h6 {
-    @apply font-h6 leading-h6 font-montserrat text-h6;
+    @apply font-montserrat text-h6 font-h6 leading-h6;
   }
+}
+
+* {
+  min-width: 0;
 }
