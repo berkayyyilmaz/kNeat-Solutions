@@ -6,7 +6,7 @@ import InputWithButton from "../components/InputWithButton";
 export default function FooterTest() {
   return (
     <footer>
-      <div className="bg-[#FAFAFA]">
+      <div className="bg-lightGray">
         <div className="container mx-auto flex flex-col items-start justify-between gap-4 px-6 py-6 sm:flex-row sm:items-center 2xl:px-36">
           <div className="text-3xl font-bold text-gray-800">kNeat</div>
           <div className="flex space-x-4">
@@ -46,7 +46,7 @@ export default function FooterTest() {
           </div>
         </div>
       </div>
-      <h4 className="bg-[#FAFAFA] py-10 text-center font-bold text-primary">
+      <h4 className="bg-lightGray py-10 text-center font-bold text-primary">
         Stargazer Inc.
       </h4>
     </footer>

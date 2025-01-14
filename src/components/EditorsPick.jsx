@@ -29,7 +29,7 @@ const EditorsPick = () => {
   ];
 
   return (
-    <div className="w-full bg-[#FAFAFA] p-4">
+    <div className="bg-lightGray w-full p-4">
       <h1 className="mb-4 text-center text-2xl font-bold">EDITOR'S PICK</h1>
       <p className="mb-8 text-center text-gray-600">
         Problems trying to resolve the conflict between

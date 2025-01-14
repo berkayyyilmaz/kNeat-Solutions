@@ -6,7 +6,7 @@ module.exports = {
         primary: "#FF7B47",
         secondary: "#0D5C63",
         fgray: "#737373",
-        headerBlue: "#252B42",
+        lightGray: "#FAFAFA",
       },
       fontFamily: {
         montserrat: ["Montserrat", "sans-serif"], // Montserrat fontu
