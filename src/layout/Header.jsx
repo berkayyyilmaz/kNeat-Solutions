@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Facebook,
   Instagram,
@@ -112,8 +113,10 @@ function Header() {
             {/* Right Icons */}
             <div className="hidden items-center space-x-6 text-secondary md:flex">
               <button className="flex items-center gap-2 hover:text-gray-800">
-                <User />
-                <span className="hidden lg:inline">Login / Register</span>
+                <Link to="/login" className="flex items-center gap-2">
+                  <User />
+                  <span className="hidden lg:inline">Login / Register</span>
+                </Link>
               </button>
               <button className="hover:text-gray-800">
                 <Search />
