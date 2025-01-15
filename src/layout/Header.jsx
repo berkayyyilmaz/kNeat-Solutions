@@ -96,13 +96,15 @@ function Header() {
         <div className="container mx-auto">
           <div className="flex items-center justify-between bg-white px-4 py-6 lg:px-10">
             {/* Logo */}
-            <div className="text-3xl font-bold text-gray-800">kNeat</div>
+            <Link to="/" className="text-3xl font-bold text-gray-800">
+              kNeat
+            </Link>
 
             {/* Navigation */}
             <nav className="hidden md:block">
               <ul className="flex gap-6 text-h6 font-bold text-fgray">
                 <li>Home</li>
-                <li>Shop</li>
+                <Link to="/shop">Shop</Link>
                 <li>About</li>
                 <li>Blog</li>
                 <li>Contact</li>
