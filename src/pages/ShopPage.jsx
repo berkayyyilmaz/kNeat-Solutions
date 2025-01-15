@@ -1,7 +1,9 @@
 import { ChevronRight } from "lucide-react";
 import PageContent from "../layout/PageContent";
-import image1 from "../assets/clothingcard/media_bg-cover.png";
 import ClothingCard from "../components/ClothingCard";
+import { shopCards } from "../data/shopCards";
+import ProductList from "../components/ProductList";
+
 export default function ShopPage() {
   return (
     <PageContent>
@@ -18,9 +20,21 @@ export default function ShopPage() {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 items-center justify-items-center gap-4 py-4 sm:grid-cols-2 lg:grid-cols-3 lg:px-10">
-        <ClothingCard image={image1} title="CLOTHS" />
+      <div className="bg-lightGray">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-center justify-items-center gap-y-4 py-4 lg:pb-24 xl:grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
+            {shopCards.map((card, index) => (
+              <ClothingCard
+                key={index}
+                image={card.image}
+                title={card.title}
+                subtitle={card.subtitle}
+              />
+            ))}
+          </div>
+        </div>
       </div>
+      <ProductList />
     </PageContent>
   );
 }

@@ -23,7 +23,7 @@ function Header() {
   return (
     <header>
       {/* Mobile Navbar */}
-      <div className="my-2 flex items-center justify-between bg-white px-4 py-2 sm:hidden">
+      <div className="my-2 flex items-center justify-between bg-white px-4 py-2 md:hidden">
         {/* Company Name */}
         <div className="text-3xl font-bold text-gray-800">kNeat</div>
 
@@ -39,7 +39,7 @@ function Header() {
             <ShoppingCart />
           </button>
           <button
-            className="text-gray-600 hover:text-gray-800 sm:hidden"
+            className="text-gray-600 hover:text-gray-800"
             onClick={toggleMenu}
           >
             <Menu />
@@ -62,7 +62,7 @@ function Header() {
       </div>
 
       {/* Desktop Header */}
-      <div className="hidden sm:block">
+      <div className="hidden md:block">
         {/* Contact Header */}
         <div className="bg-secondary">
           <div className="container mx-auto flex justify-between px-4 py-4 text-white lg:px-10">

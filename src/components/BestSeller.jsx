@@ -1,6 +1,5 @@
 import ProductCard from "./ProductCard.jsx";
 import { products } from "../data/bestsellerproducts.js";
-import React from "react";
 
 export default function BestSeller() {
   return (
