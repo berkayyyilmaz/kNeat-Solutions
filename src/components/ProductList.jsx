@@ -1,34 +1,46 @@
 import React, { useState } from "react";
-import ProductCard from "./ProductCard";
-import { products } from "../data/bestsellerproducts";
+import ProductCard from "./TestProductCard";
+import { products } from "../data/shopPageProducts";
+import Pagination from "./Pagination";
+import { LayoutGrid, List } from "lucide-react";
+
 const ProductList = () => {
   const [viewMode, setViewMode] = useState("grid");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage, setProductsPerPage] = useState(8);
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct,
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Görünüm Değiştirici */}
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Ürünler</h1>
-        <div className="flex gap-2">
+        <h1 className="text-xl font-semibold">Products</h1>
+        <div className="hidden gap-2 sm:flex">
           <button
             className={`rounded border p-2 ${
               viewMode === "grid"
-                ? "bg-blue-500 text-white"
+                ? "bg-primary text-white"
                 : "bg-white text-black"
             }`}
             onClick={() => setViewMode("grid")}
           >
-            Grid
+            <LayoutGrid />
           </button>
           <button
             className={`rounded border p-2 ${
               viewMode === "list"
-                ? "bg-blue-500 text-white"
+                ? "bg-primary text-white"
                 : "bg-white text-black"
             }`}
             onClick={() => setViewMode("list")}
           >
-            Liste
+            <List />
           </button>
         </div>
       </div>
@@ -37,30 +49,32 @@ const ProductList = () => {
       <div
         className={`grid ${
           viewMode === "grid"
-            ? "grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            ? "grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 lg:grid-cols-4"
             : "grid-cols-1 gap-4"
         }`}
       >
-        {products.map((product) => (
-          <div
+        {currentProducts.map((product) => (
+          <ProductCard
             key={product.id}
-            className={`${
-              viewMode === "list"
-                ? "flex items-center gap-4 rounded border p-4"
-                : ""
-            }`}
-          >
-            {/* Grid modunda olduğu gibi `ProductCard`'ı liste görünümüne uyarlıyoruz */}
-            <ProductCard
-              image={product.image}
-              title={product.title}
-              department={product.department}
-              oldPrice={product.oldPrice}
-              newPrice={product.newPrice}
-              colors={product.colors}
-            />
-          </div>
+            image={product.image}
+            title={product.title}
+            department={product.department}
+            oldPrice={product.oldPrice}
+            newPrice={product.newPrice}
+            colors={product.colors}
+            viewType={viewMode} // Görünüm modunu burada belirtiyoruz
+          />
         ))}
+      </div>
+
+      {/* Sayfalama */}
+      <div className="mt-8 flex justify-center">
+        <Pagination
+          totalPosts={products.length}
+          productsPerPage={productsPerPage}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+        />
       </div>
     </div>
   );

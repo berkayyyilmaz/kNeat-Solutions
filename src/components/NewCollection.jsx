@@ -38,25 +38,25 @@ export default function NewCollection() {
   };
 
   return (
-    <div className="mx-auto w-screen max-w-screen-xl">
+    <div className="w-full">
       <Slider {...settings}>
-        <div className="relative mx-auto h-[753px] w-[416px] overflow-hidden">
+        <div className="relative mx-auto h-[753px] w-full overflow-hidden">
           <img
-            className="h-full w-auto object-cover object-[60%]"
+            className="h-full w-full object-cover object-[70%] sm:object-top"
             src={slider}
             alt="Slide 1"
           />
         </div>
-        <div className="relative mx-auto h-[753px] w-[416px] overflow-hidden">
+        <div className="relative mx-auto h-[753px] w-full overflow-hidden">
           <img
-            className="h-full w-auto object-cover"
+            className="h-full w-full object-cover object-top"
             src="https://placehold.co/600x400"
             alt="Slide 2"
           />
         </div>
-        <div className="relative mx-auto h-[753px] w-[416px] overflow-hidden">
+        <div className="relative mx-auto h-[753px] w-full overflow-hidden">
           <img
-            className="h-full w-auto object-cover"
+            className="h-full w-full object-cover object-top"
             src="https://via.placeholder.com/800x400?text=Slide+3"
             alt="Slide 3"
           />

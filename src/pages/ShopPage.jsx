@@ -34,6 +34,7 @@ export default function ShopPage() {
           </div>
         </div>
       </div>
+      {/* Ürün Listesi */}
       <ProductList />
     </PageContent>
   );
