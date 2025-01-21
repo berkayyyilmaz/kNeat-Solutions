@@ -3,6 +3,7 @@ import PageContent from "../layout/PageContent";
 import ClothingCard from "../components/ClothingCard";
 import { shopCards } from "../data/shopCards";
 import ProductList from "../components/ProductList";
+import Clients from "../components/Clients";
 
 export default function ShopPage() {
   return (
@@ -36,6 +37,7 @@ export default function ShopPage() {
       </div>
       {/* Ürün Listesi */}
       <ProductList />
+      <Clients />
     </PageContent>
   );
 }

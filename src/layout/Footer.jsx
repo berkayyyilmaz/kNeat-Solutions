@@ -41,6 +41,7 @@ export default function FooterTest() {
                 placeholder="Your Mail"
                 buttonText="Subscribe"
                 inputClassName="w-42 sm:w-36 lg:w-48"
+                buttonClassName="w-24 "
               />
             </div>
           </div>

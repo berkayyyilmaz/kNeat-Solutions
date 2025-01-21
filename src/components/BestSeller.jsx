@@ -15,6 +15,7 @@ export default function BestSeller() {
         {products.map((product, index) => (
           <ProductCard
             key={index}
+            id={product.id}
             image={product.image}
             title={product.title}
             department={product.department}

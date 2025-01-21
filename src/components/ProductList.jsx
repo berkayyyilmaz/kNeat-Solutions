@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ProductCard from "./TestProductCard";
+import ProductCard from "./ProductCard";
 import { products } from "../data/shopPageProducts";
 import Pagination from "./Pagination";
 import { LayoutGrid, List } from "lucide-react";
@@ -49,12 +49,13 @@ const ProductList = () => {
       <div
         className={`grid ${
           viewMode === "grid"
-            ? "grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 lg:grid-cols-4"
+            ? "grid-cols-1 justify-items-center sm:grid-cols-2 lg:grid-cols-4 xl:px-24 2xl:px-36"
             : "grid-cols-1 gap-4"
         }`}
       >
         {currentProducts.map((product) => (
           <ProductCard
+            id={product.id}
             key={product.id}
             image={product.image}
             title={product.title}

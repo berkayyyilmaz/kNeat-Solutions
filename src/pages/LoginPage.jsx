@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import loginPic from "../assets/loginandsignup/login.jpg";
 
 export default function Login() {
@@ -15,8 +16,10 @@ export default function Login() {
         {/* Login Formu */}
         <div className="w-full"></div>
         <div className="flex min-h-screen w-full flex-col items-center justify-center md:justify-center">
-          <div className="text-lightGray mb-3 w-full text-end sm:w-fit sm:text-center">
-            <div className="text-bold text-4xl sm:text-5xl">kNeat</div>
+          <div className="mb-3 w-full text-end text-lightGray sm:w-fit sm:text-center">
+            <Link to="/">
+              <div className="text-bold text-4xl sm:text-5xl">kNeat</div>
+            </Link>
             <div className="block sm:hidden">
               <p>Seamless neat,</p> <p>perfectly knit.</p>
             </div>

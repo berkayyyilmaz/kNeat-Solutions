@@ -1,6 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom/cjs/react-router-dom";
 
 const ProductCard = ({
+  id,
   image,
   title,
   department,
@@ -10,10 +12,12 @@ const ProductCard = ({
 }) => {
   return (
     <div className="w-64 rounded-lg bg-white p-4">
-      {/* Product Image */}
-      <div className="relative">
-        <img src={image} alt={title} className="h-96 w-full object-cover" />
-      </div>
+      <Link to={`/product/${id}`} className="block">
+        {/* Product Image */}
+        <div className="relative">
+          <img src={image} alt={title} className="h-96 w-full object-cover" />
+        </div>
+      </Link>
       {/* Product Info */}
       <div className="mt-4 text-center">
         <h3 className="text-lg font-semibold">{title}</h3>
