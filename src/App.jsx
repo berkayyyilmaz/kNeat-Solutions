@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
 import Login from "./pages/LoginPage";
+import SignUp from "./pages/SignUpPage";
 import Shop from "./pages/ShopPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 
@@ -17,6 +18,7 @@ function App() {
       <Switch>
         <Route path="/" exact component={HomePage} />
         <Route path="/login" component={Login} />
+        <Route path="/signup" component={SignUp} />
         <Route path="/shop" component={Shop} />
         <Route path="/product/:id" component={ProductDetailPage} />
       </Switch>

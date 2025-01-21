@@ -1,7 +1,26 @@
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import loginPic from "../assets/loginandsignup/login.jpg";
+import { useForm } from "react-hook-form";
+import api from "../services/api";
 
 export default function Login() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await api.post("/login", data);
+      console.log("Giriş başarılı:", response.data);
+      // Başarılı giriş sonrası yönlendirme yapılabilir
+    } catch (error) {
+      console.error("Giriş sırasında hata oluştu:", error);
+      // Hata durumunda kullanıcıya bilgi verilebilir
+    }
+  };
+
   return (
     <div className="relative min-h-screen">
       {/* Arka Plan */}
@@ -31,7 +50,7 @@ export default function Login() {
             <h2 className="text-center text-2xl font-bold text-secondary">
               Log In
             </h2>
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <label
                   htmlFor="email"
@@ -42,10 +61,21 @@ export default function Login() {
                 <input
                   type="email"
                   id="email"
-                  required
+                  {...register("email", {
+                    required: "E-posta alanı zorunludur",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Geçerli bir e-posta adresi giriniz",
+                    },
+                  })}
                   className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
                   placeholder="Your Mail"
                 />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
               <div>
                 <label
@@ -57,10 +87,21 @@ export default function Login() {
                 <input
                   type="password"
                   id="password"
-                  required
+                  {...register("password", {
+                    required: "Şifre alanı zorunludur",
+                    minLength: {
+                      value: 8,
+                      message: "Şifre en az 8 karakter olmalıdır",
+                    },
+                  })}
                   className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
                   placeholder="Your Password"
                 />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
               <button
                 type="submit"
@@ -76,12 +117,12 @@ export default function Login() {
               >
                 Forgot Password?
               </a>
-              <a
-                href="#"
+              <Link
+                to="/signup"
                 className="text-sm font-bold text-primary hover:underline"
               >
                 Create Account
-              </a>
+              </Link>
             </div>
           </div>
         </div>
