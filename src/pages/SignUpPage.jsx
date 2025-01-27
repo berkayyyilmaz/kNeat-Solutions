@@ -1,12 +1,25 @@
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import signupPic from "../assets/loginandsignup/signup.jpg";
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import api from "../services/api";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getRoles } from "../redux/actions/roleActions";
 
 export default function SignUp() {
-  const [roles, setRoles] = useState([]);
   const [selectedRole, setSelectedRole] = useState("customer");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const history = useHistory();
+  const dispatch = useDispatch();
+
+  // Redux'tan rolleri ve loading/error durumlarını al
+  const {
+    roles,
+    loading: rolesLoading,
+    error: rolesError,
+  } = useSelector((state) => state.role);
 
   const {
     register,
@@ -23,33 +36,71 @@ export default function SignUp() {
   const password = watch("password");
 
   useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const response = await api.get("/roles");
-        setRoles(response.data);
-        // Varsayılan olarak customer rolünü seç
-        const customerRole = response.data.find(
-          (role) => role.code === "customer",
-        );
-        if (customerRole) {
-          setValue("role_id", customerRole.code);
-          setSelectedRole(customerRole.code);
-        }
-      } catch (error) {
-        console.error("Roller yüklenirken hata oluştu:", error);
+    // Redux thunk action'ı ile rolleri çek
+    dispatch(getRoles());
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Roller yüklendiğinde varsayılan rolü ayarla
+    if (roles && roles.length > 0) {
+      const customerRole = roles.find((role) => role.code === "customer");
+      if (customerRole) {
+        setValue("role_id", customerRole.code);
+        setSelectedRole(customerRole.code);
       }
-    };
-    fetchRoles();
-  }, [setValue]);
+    }
+  }, [roles, setValue]);
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+
     try {
-      const response = await api.post("/signup", data);
-      console.log("Kayıt başarılı:", response.data);
-      // Başarılı kayıt sonrası yönlendirme veya bilgilendirme yapılabilir
+      let requestData;
+
+      if (data.role_id === "store") {
+        requestData = {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          role_id: data.role_id,
+          store: {
+            name: data.store_name,
+            phone: data.store_phone,
+            tax_no: data.tax_no,
+            bank_account: data.bank_account,
+          },
+        };
+      } else {
+        requestData = {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          role_id: data.role_id,
+        };
+      }
+
+      await api.post("/signup", requestData);
+      setSuccess(
+        "Your account has been successfully created! You can activate your account by clicking the activation link sent to your email address.",
+      );
+
+      // 3 saniye sonra yönlendir
+      setTimeout(() => {
+        history.goBack();
+        history.replace(history.location.pathname, {
+          warning:
+            "Please click the activation link sent to your email to activate your account!",
+        });
+      }, 3000);
     } catch (error) {
-      console.error("Kayıt sırasında hata oluştu:", error);
-      // Hata durumunda kullanıcıya bilgi verilebilir
+      setError(
+        error.response?.data?.message ||
+          "An error occurred during registration",
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -82,6 +133,13 @@ export default function SignUp() {
             <h2 className="text-center text-2xl font-bold text-secondary">
               Sign Up
             </h2>
+
+            {rolesError && (
+              <div className="rounded-md bg-red-50 p-4">
+                <div className="text-sm text-red-700">{rolesError}</div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <label
@@ -94,10 +152,10 @@ export default function SignUp() {
                   type="text"
                   id="name"
                   {...register("name", {
-                    required: "İsim alanı zorunludur",
+                    required: "Name is required",
                     minLength: {
                       value: 3,
-                      message: "İsim en az 3 karakter olmalıdır",
+                      message: "Name must be at least 3 characters",
                     },
                   })}
                   className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
@@ -121,10 +179,10 @@ export default function SignUp() {
                   type="email"
                   id="email"
                   {...register("email", {
-                    required: "E-posta alanı zorunludur",
+                    required: "Email is required",
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Geçerli bir e-posta adresi giriniz",
+                      message: "Please enter a valid email address",
                     },
                   })}
                   className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
@@ -148,16 +206,16 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   {...register("password", {
-                    required: "Şifre alanı zorunludur",
+                    required: "Password is required",
                     minLength: {
                       value: 8,
-                      message: "Şifre en az 8 karakter olmalıdır",
+                      message: "Password must be at least 8 characters",
                     },
                     pattern: {
                       value:
                         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
                       message:
-                        "Şifre en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir",
+                        "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
                     },
                   })}
                   className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
@@ -181,9 +239,9 @@ export default function SignUp() {
                   type="password"
                   id="confirmPassword"
                   {...register("confirmPassword", {
-                    required: "Şifre tekrarı zorunludur",
+                    required: "Password confirmation is required",
                     validate: (value) =>
-                      value === password || "Şifreler eşleşmiyor",
+                      value === password || "Passwords do not match",
                   })}
                   className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
                   placeholder="Confirm Your Password"
@@ -210,13 +268,18 @@ export default function SignUp() {
                     setSelectedRole(e.target.value);
                     setValue("role_id", e.target.value);
                   }}
-                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
+                  disabled={rolesLoading}
+                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary disabled:bg-gray-100"
                 >
-                  {roles.map((role) => (
-                    <option key={role.id} value={role.code}>
-                      {role.name}
-                    </option>
-                  ))}
+                  {rolesLoading ? (
+                    <option>Roller yükleniyor...</option>
+                  ) : (
+                    roles.map((role) => (
+                      <option key={role.id} value={role.code}>
+                        {role.name}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
 
@@ -233,10 +296,10 @@ export default function SignUp() {
                       type="text"
                       id="storeName"
                       {...register("store_name", {
-                        required: "Mağaza adı zorunludur",
+                        required: "Store name is required",
                         minLength: {
                           value: 3,
-                          message: "Mağaza adı en az 3 karakter olmalıdır",
+                          message: "Store name must be at least 3 characters",
                         },
                       })}
                       className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
@@ -260,11 +323,10 @@ export default function SignUp() {
                       type="tel"
                       id="storePhone"
                       {...register("store_phone", {
-                        required: "Telefon numarası zorunludur",
+                        required: "Phone number is required",
                         pattern: {
                           value: /^(\+90|0)?[0-9]{10}$/,
-                          message:
-                            "Geçerli bir Türkiye telefon numarası giriniz",
+                          message: "Please enter a valid phone number",
                         },
                       })}
                       className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
@@ -288,11 +350,11 @@ export default function SignUp() {
                       type="text"
                       id="taxId"
                       {...register("tax_no", {
-                        required: "Vergi numarası zorunludur",
+                        required: "Tax ID is required",
                         pattern: {
                           value: /^T\d{4}V\d{6}$/,
                           message:
-                            "Geçerli bir vergi numarası giriniz (TXXXXVXXXXXX formatında)",
+                            "Please enter a valid Tax ID (Format: TXXXXVXXXXXX)",
                         },
                       })}
                       className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
@@ -316,11 +378,11 @@ export default function SignUp() {
                       type="text"
                       id="bankAccount"
                       {...register("bank_account", {
-                        required: "IBAN zorunludur",
+                        required: "IBAN is required",
                         pattern: {
                           value:
                             /^TR[0-9]{2}[0-9]{4}[0-9]{4}[0-9]{4}[0-9]{4}[0-9]{4}[0-9]{2}$/,
-                          message: "Geçerli bir IBAN numarası giriniz",
+                          message: "Please enter a valid IBAN number",
                         },
                       })}
                       className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
@@ -335,11 +397,31 @@ export default function SignUp() {
                 </>
               )}
 
+              {error && (
+                <div className="rounded-md bg-red-50 p-4">
+                  <div className="text-sm text-red-700">{error}</div>
+                </div>
+              )}
+
+              {success && (
+                <div className="rounded-md bg-green-50 p-4">
+                  <div className="text-sm text-green-700">{success}</div>
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="mt-4 w-full rounded-md bg-primary py-2 text-white focus:outline-none focus:ring focus:ring-secondary"
+                disabled={isLoading || success}
+                className="mt-4 w-full rounded-md bg-primary py-2 text-white focus:outline-none focus:ring focus:ring-secondary disabled:opacity-50"
               >
-                Sign Up
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    <span className="ml-2">Registering...</span>
+                  </div>
+                ) : (
+                  "Sign Up"
+                )}
               </button>
             </form>
             <div className="mt-4 text-center">

@@ -18,6 +18,7 @@ export default function ProductDetailPage() {
   console.log("Ürün ID:", id); // ID'yi kontrol etmek için
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
   const [activeTab, setActiveTab] = useState("description");
 
   // Örnek ürün verisi (gerçek projede API'den gelecek)
@@ -148,12 +149,22 @@ export default function ProductDetailPage() {
                 {product.sizes.map((size) => (
                   <button
                     key={size}
-                    className="h-12 w-12 rounded-md border border-gray-300 hover:border-black focus:border-black focus:outline-none"
+                    onClick={() => setSelectedSize(size)}
+                    className={`h-12 w-12 rounded-md border transition-all duration-200 ${
+                      selectedSize === size
+                        ? "border-2 border-black"
+                        : "border-gray-300 hover:border-black"
+                    } focus:outline-none`}
                   >
                     {size}
                   </button>
                 ))}
               </div>
+              {selectedSize && (
+                <span className="mt-2 block text-sm text-gray-600">
+                  Seçilen beden: {selectedSize}
+                </span>
+              )}
             </div>
 
             {/* Renk Seçimi */}

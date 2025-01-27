@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom/cjs/react-router-dom";
+import { useHistory } from "react-router-dom/cjs/react-router-dom";
 
 const ProductCard = ({
   id,
@@ -10,14 +10,21 @@ const ProductCard = ({
   newPrice,
   colors,
 }) => {
+  const history = useHistory();
+  // Ürün detay sayfasına yönlendirme ve sayfayı en üste kaydırma
+  const handleProductClick = () => {
+    window.scrollTo(0, 0);
+    history.push(`/product/${id}`);
+  };
+
   return (
     <div className="w-64 rounded-lg bg-white p-4">
-      <Link to={`/product/${id}`} className="block">
+      <div onClick={handleProductClick} className="cursor-pointer">
         {/* Product Image */}
         <div className="relative">
           <img src={image} alt={title} className="h-96 w-full object-cover" />
         </div>
-      </Link>
+      </div>
       {/* Product Info */}
       <div className="mt-4 text-center">
         <h3 className="text-lg font-semibold">{title}</h3>
