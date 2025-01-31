@@ -18,10 +18,10 @@ const ProductCard = ({
   };
 
   return (
-    <div className="w-64 rounded-lg bg-white p-4">
+    <div className="w-64 rounded-lg bg-white">
       <div onClick={handleProductClick} className="cursor-pointer">
         {/* Product Image */}
-        <div className="relative">
+        <div className="relative p-4">
           <img src={image} alt={title} className="h-96 w-full object-cover" />
         </div>
       </div>

@@ -47,10 +47,10 @@ const ProductList = () => {
 
       {/* Ürün Listesi */}
       <div
-        className={`grid ${
+        className={` ${
           viewMode === "grid"
-            ? "grid-cols-1 justify-items-center sm:grid-cols-2 lg:grid-cols-4 xl:px-24 2xl:px-36"
-            : "grid-cols-1 gap-4"
+            ? "mx-auto flex max-w-7xl flex-wrap justify-center gap-4"
+            : "grid grid-cols-1 gap-4"
         }`}
       >
         {currentProducts.map((product) => (

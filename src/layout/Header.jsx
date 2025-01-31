@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import Gravatar from "react-gravatar";
 import {
   Facebook,
   Instagram,
@@ -11,13 +13,22 @@ import {
   Twitter,
   User,
   Youtube,
+  LogOut,
+  ChevronDown,
+  UserCircle,
 } from "lucide-react";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const user = useSelector((state) => state.client.user);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
+  };
+
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen((prev) => !prev);
   };
 
   return (
@@ -29,9 +40,11 @@ function Header() {
 
         {/* Icons */}
         <div className="flex items-center space-x-6">
-          <button className="text-gray-600 hover:text-gray-800">
-            <User />
-          </button>
+          <Link to={user ? "/profile" : "/login"}>
+            <button className="text-gray-600 hover:text-gray-800">
+              <User />
+            </button>
+          </Link>
           <button className="text-gray-600 hover:text-gray-800">
             <Search />
           </button>
@@ -114,12 +127,51 @@ function Header() {
 
             {/* Right Icons */}
             <div className="hidden items-center space-x-6 text-secondary md:flex">
-              <button className="flex items-center gap-2 hover:text-gray-800">
-                <Link to="/login" className="flex items-center gap-2">
-                  <User />
-                  <span className="hidden lg:inline">Login / Register</span>
-                </Link>
-              </button>
+              {user ? (
+                <div className="relative">
+                  <button
+                    onClick={toggleProfileDropdown}
+                    className="flex items-center gap-2 hover:text-gray-800"
+                  >
+                    <div className="h-8 w-8 overflow-hidden rounded-full">
+                      <Gravatar
+                        email={user.email}
+                        size={32}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <span className="hidden font-medium lg:inline">
+                      {user.name}
+                    </span>
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${isProfileDropdownOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+
+                  {isProfileDropdownOpen && (
+                    <div className="absolute right-0 z-50 mt-2 w-48 rounded-md border border-gray-100 bg-white py-1 shadow-lg">
+                      <Link
+                        to="/profile"
+                        className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
+                      >
+                        <UserCircle className="h-4 w-4" />
+                        <span>Profil</span>
+                      </Link>
+                      <button className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50">
+                        <LogOut className="h-4 w-4" />
+                        <span>Çıkış Yap</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button className="flex items-center gap-2 hover:text-gray-800">
+                  <Link to="/login" className="flex items-center gap-2">
+                    <User />
+                    <span className="hidden lg:inline">Login / Register</span>
+                  </Link>
+                </button>
+              )}
               <button className="hover:text-gray-800">
                 <Search />
               </button>

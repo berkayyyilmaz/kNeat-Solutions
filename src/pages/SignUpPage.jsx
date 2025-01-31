@@ -129,7 +129,7 @@ export default function SignUp() {
               Seamless neat, perfectly knit.
             </div>
           </div>
-          <div className="h-fit w-full max-w-md space-y-6 rounded-3xl bg-white p-8 shadow-md">
+          <div className="h-fit w-full max-w-md space-y-6 rounded-sm bg-white p-8 shadow-md">
             <h2 className="text-center text-2xl font-bold text-secondary">
               Sign Up
             </h2>
