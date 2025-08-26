@@ -9,39 +9,85 @@ const ProductCard = ({
   oldPrice,
   newPrice,
   colors,
+  viewType = "grid",
 }) => {
   const history = useHistory();
-  // Ürün detay sayfasına yönlendirme ve sayfayı en üste kaydırma
+
   const handleProductClick = () => {
     window.scrollTo(0, 0);
     history.push(`/product/${id}`);
   };
 
-  return (
-    <div className="w-64 rounded-lg bg-white">
-      <div onClick={handleProductClick} className="cursor-pointer">
-        {/* Product Image */}
-        <div className="relative p-4">
-          <img src={image} alt={title} className="h-96 w-full object-cover" />
+  if (viewType === "list") {
+    return (
+      <div className="group flex overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-lg">
+        <div onClick={handleProductClick} className="cursor-pointer">
+          <div className="h-32 w-32 flex-shrink-0 overflow-hidden rounded-l-xl sm:h-40 sm:w-40">
+            <img
+              src={image}
+              alt={title}
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+        </div>
+        <div className="flex flex-1 flex-col justify-center p-4">
+          <h3 className="text-lg font-semibold text-gray-900 transition-colors group-hover:text-primary">
+            {title}
+          </h3>
+          <p className="text-sm text-fgray">{department}</p>
+          <div className="mt-2 flex items-center space-x-3">
+            <span className="text-base text-fgray line-through">
+              ${oldPrice}
+            </span>
+            <span className="text-lg font-bold text-green-600">
+              ${newPrice}
+            </span>
+          </div>
+          <div className="mt-3 flex space-x-2">
+            {colors.map((color, index) => (
+              <div
+                key={index}
+                className="h-4 w-4 rounded-full border border-gray-200 transition-transform hover:scale-110"
+                style={{ backgroundColor: color }}
+              />
+            ))}
+          </div>
         </div>
       </div>
-      {/* Product Info */}
-      <div className="mt-4 text-center">
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <p className="text-sm text-gray-500">{department}</p>
-        {/* Pricing */}
-        <div className="mt-2 flex items-center justify-center space-x-2">
-          <span className="text-gray-400 line-through">${oldPrice}</span>
-          <span className="font-bold text-green-500">${newPrice}</span>
+    );
+  }
+
+  return (
+    <div className="group w-full max-w-xs overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-lg">
+      <div onClick={handleProductClick} className="cursor-pointer">
+        <div className="relative overflow-hidden">
+          <img
+            src={image}
+            alt={title}
+            className="h-80 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300 group-hover:bg-opacity-10" />
         </div>
-        {/* Color Options */}
-        <div className="mt-2 flex justify-center space-x-2">
+      </div>
+
+      <div className="p-5">
+        <h3 className="text-lg font-semibold text-gray-900 transition-colors group-hover:text-primary">
+          {title}
+        </h3>
+        <p className="mt-1 text-sm text-fgray">{department}</p>
+
+        <div className="mt-3 flex items-center justify-center space-x-3">
+          <span className="text-base text-fgray line-through">${oldPrice}</span>
+          <span className="text-xl font-bold text-green-600">${newPrice}</span>
+        </div>
+
+        <div className="mt-4 flex justify-center space-x-2">
           {colors.map((color, index) => (
-            <span
+            <div
               key={index}
-              className="h-4 w-4 rounded-full"
+              className="h-5 w-5 rounded-full border-2 border-gray-200 transition-transform hover:scale-110"
               style={{ backgroundColor: color }}
-            ></span>
+            />
           ))}
         </div>
       </div>

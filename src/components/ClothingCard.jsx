@@ -1,10 +1,18 @@
 const ClothingCard = ({ image, title, subtitle }) => {
   return (
-    <div className="relative h-[300px] w-[300px] xl:h-[250px] xl:w-[250px] 2xl:h-[300px] 2xl:w-[300px]">
-      <img src={image} alt={title} className="h-full w-full object-cover" />
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
-        <span className="font-bold text-white">{title}</span>
-        <p className="text-white">{subtitle}</p>
+    <div className="group relative h-80 w-full max-w-xs overflow-hidden rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
+      <img
+        src={image}
+        alt={title}
+        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+      />
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+        <h3 className="mb-2 text-xl font-bold text-white drop-shadow-lg transition-transform group-hover:scale-105">
+          {title}
+        </h3>
+        <p className="text-sm text-white drop-shadow-md transition-transform group-hover:scale-105">
+          {subtitle}
+        </p>
       </div>
     </div>
   );

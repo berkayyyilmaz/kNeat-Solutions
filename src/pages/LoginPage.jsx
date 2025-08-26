@@ -2,8 +2,9 @@ import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import loginPic from "../assets/loginandsignup/login.jpg";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../redux/actions/clientActions";
+import { loginUser, verifyToken } from "../redux/actions/clientActions";
 import { ToastContainer, toast } from "react-toastify";
+import { useEffect } from "react";
 
 export default function Login() {
   const {
@@ -15,6 +16,23 @@ export default function Login() {
   const history = useHistory();
   const { user } = useSelector((state) => state.client);
 
+  // Sayfa yüklendiğinde mevcut token kontrolü
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    if (token) {
+      dispatch(verifyToken())
+        .then(() => {
+          // Token geçerliyse ana sayfaya yönlendir
+          history.push("/");
+        })
+        .catch(() => {
+          // Token geçersizse burada kal, hata verme
+          console.log("Mevcut token geçersiz");
+        });
+    }
+  }, [dispatch, history]);
+
+  // MEVCUT onSubmit MANTIGI AYNEN KORUNDU - remember me logic dahil
   const onSubmit = async (data) => {
     try {
       const response = await dispatch(loginUser(data));

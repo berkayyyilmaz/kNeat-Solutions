@@ -2,9 +2,12 @@ import axios from "axios";
 
 export const api = axios.create({
   baseURL: "https://workintech-fe-ecommerce.onrender.com",
-  headers: {
-    Authorization: `${localStorage.getItem("userToken")}`,
-  },
 });
+
+// Başlangıçta token varsa header'a ekle
+const initialToken = localStorage.getItem("userToken");
+if (initialToken) {
+  api.defaults.headers.Authorization = initialToken;
+}
 
 export default api;

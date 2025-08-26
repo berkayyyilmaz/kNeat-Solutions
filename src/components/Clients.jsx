@@ -9,16 +9,23 @@ export default function Clients() {
   const brands = [brand1, brand2, brand3, brand4, brand5, brand6];
 
   return (
-    <div className="bg-lightGray">
-      <div className="container mx-auto border-b-2 py-10">
-        <div className="flex flex-col justify-center gap-y-10 sm:flex-row lg:gap-x-20">
+    <section className="bg-lightGray py-16">
+      <div className="container mx-auto px-4 lg:px-8 xl:px-12">
+        <div className="grid grid-cols-2 items-center justify-items-center gap-8 sm:grid-cols-3 lg:grid-cols-6">
           {brands.map((brand, index) => (
-            <div key={index} className="flex items-center justify-center p-4">
-              <img src={brand} alt={`Brand ${index + 1}`} />
+            <div
+              key={index}
+              className="flex items-center justify-center p-4 opacity-60 grayscale transition-all duration-300 hover:scale-105 hover:opacity-100 hover:grayscale-0"
+            >
+              <img
+                src={brand}
+                alt={`Brand ${index + 1}`}
+                className="max-h-12 w-auto object-contain"
+              />
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

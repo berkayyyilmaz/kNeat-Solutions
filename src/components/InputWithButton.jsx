@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const InputWithButton = ({
   placeholder = "Enter text",
@@ -9,20 +9,45 @@ const InputWithButton = ({
   buttonClassName = "",
   containerClassName = "",
 }) => {
+  const [inputValue, setInputValue] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      await onSubmit(inputValue);
+      setInputValue("");
+    } catch (error) {
+      console.error("Submission error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className={`flex ${containerClassName}`}>
+    <form
+      onSubmit={handleSubmit}
+      className={`flex gap-0 ${containerClassName}`}
+    >
       <input
         type={inputType}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
         placeholder={placeholder}
-        className={`rounded-l-lg border p-4 focus:rounded-l-lg focus:rounded-r-none focus:border-secondary focus:outline-none focus:ring-secondary ${inputClassName}`}
+        className={`flex-1 rounded-l-lg border border-gray-300 px-4 py-3 transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary ${inputClassName}`}
+        disabled={isSubmitting}
       />
       <button
-        className={`rounded-r-lg bg-secondary px-2 text-white ${buttonClassName}`}
-        onClick={onSubmit}
+        type="submit"
+        disabled={!inputValue.trim() || isSubmitting}
+        className={`rounded-r-lg bg-primary px-6 py-3 text-white transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${buttonClassName}`}
       >
-        {buttonText}
+        {isSubmitting ? "..." : buttonText}
       </button>
-    </div>
+    </form>
   );
 };
 
