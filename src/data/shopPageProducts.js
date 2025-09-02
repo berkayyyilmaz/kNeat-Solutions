@@ -9,6 +9,8 @@ export const products = [
     oldPrice: "16.48",
     newPrice: "6.48",
     colors: ["#E63946", "#457B9D", "#2A9D8F", "#264653"],
+    categoryId: 2, // Kadın Ayakkabı
+    gender: "k",
   },
   {
     id: 2,
@@ -18,6 +20,8 @@ export const products = [
     oldPrice: "25.00",
     newPrice: "15.00",
     colors: ["#FF6F61", "#6B705C", "#FFB703", "#023047"],
+    categoryId: 11, // Erkek Gömlek
+    gender: "e",
   },
   {
     id: 3,
@@ -27,6 +31,8 @@ export const products = [
     oldPrice: "30.00",
     newPrice: "20.00",
     colors: ["#F94144", "#F3722C", "#F9C74F", "#90BE6D"],
+    categoryId: 1, // Kadın Tişört
+    gender: "k",
   },
   {
     id: 4,
@@ -36,6 +42,8 @@ export const products = [
     oldPrice: "40.00",
     newPrice: "25.00",
     colors: ["#577590", "#43AA8B", "#F9A03F", "#F4D35E"],
+    categoryId: 9, // Erkek Ayakkabı
+    gender: "e",
   },
   {
     id: 5,
@@ -45,6 +53,8 @@ export const products = [
     oldPrice: "50.00",
     newPrice: "35.00",
     colors: ["#9B5DE5", "#F15BB5", "#FEE440", "#00BBF9"],
+    categoryId: 4, // Kadın Elbise
+    gender: "k",
   },
   {
     id: 6,

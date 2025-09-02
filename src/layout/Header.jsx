@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../redux/actions/clientActions";
+import { fetchCategories } from "../redux/actions/productActions";
 import Gravatar from "react-gravatar";
 import {
   Facebook,
@@ -23,8 +24,26 @@ import {
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false);
   const user = useSelector((state) => state.client.user);
+  const { categories } = useSelector((state) => state.products);
   const dispatch = useDispatch();
+
+  // Shop dropdown için timer ref
+  const shopDropdownTimer = useRef(null);
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (shopDropdownTimer.current) {
+        clearTimeout(shopDropdownTimer.current);
+      }
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -38,6 +57,22 @@ function Header() {
     setIsProfileDropdownOpen((prev) => !prev);
   };
 
+  const handleShopMouseEnter = () => {
+    // Timer varsa iptal et
+    if (shopDropdownTimer.current) {
+      clearTimeout(shopDropdownTimer.current);
+      shopDropdownTimer.current = null;
+    }
+    setIsShopDropdownOpen(true);
+  };
+
+  const handleShopMouseLeave = () => {
+    // Immediate kapanmak yerine delay ile kapat
+    shopDropdownTimer.current = setTimeout(() => {
+      setIsShopDropdownOpen(false);
+    }, 300); // 300ms delay - best practice
+  };
+
   const handleLogout = () => {
     dispatch(logoutUser());
     setIsProfileDropdownOpen(false);
@@ -45,13 +80,21 @@ function Header() {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Shop", path: "/shop" },
+    { name: "Shop", path: "/shop", hasDropdown: true },
     { name: "About", path: "/about" },
-    { name: "Blog", path: "#" },
     { name: "Team", path: "/team" },
     { name: "Contact", path: "/contact" },
-    { name: "Pages", path: "#" },
   ];
+
+  // Kategorileri cinsiyete göre grupla
+  const groupedCategories = categories.reduce((acc, category) => {
+    const gender = category.gender === "k" ? "Kadın" : "Erkek";
+    if (!acc[gender]) {
+      acc[gender] = [];
+    }
+    acc[gender].push(category);
+    return acc;
+  }, {});
 
   return (
     <header className="relative">
@@ -113,19 +156,76 @@ function Header() {
               to="/"
               className="text-2xl font-bold text-gray-800 transition-colors hover:text-primary md:text-3xl"
             >
-              kNeat
+              KNEAT
             </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden items-center space-x-8 md:flex">
               {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className="text-sm font-semibold text-fgray transition-colors hover:text-primary"
-                >
-                  {link.name}
-                </Link>
+                <div key={link.name} className="relative">
+                  {link.hasDropdown ? (
+                    <div
+                      className="relative"
+                      onMouseEnter={handleShopMouseEnter}
+                      onMouseLeave={handleShopMouseLeave}
+                    >
+                      <Link
+                        to={link.path}
+                        className="flex items-center gap-1 text-sm font-semibold text-fgray transition-colors hover:text-primary"
+                      >
+                        {link.name}
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform ${
+                            isShopDropdownOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </Link>
+
+                      {/* Shop Dropdown Menu */}
+                      {isShopDropdownOpen && (
+                        <div className="animate-slideDown absolute left-0 z-50 mt-2 w-96 bg-white py-6 shadow-xl">
+                          <div className="grid grid-cols-2 gap-6 px-6">
+                            {Object.entries(groupedCategories).map(
+                              ([gender, genderCategories]) => (
+                                <div key={gender}>
+                                  <h3 className="mb-4 pb-2 font-montserrat text-sm font-bold uppercase tracking-wider text-gray-900">
+                                    {gender}
+                                  </h3>
+                                  <div className="space-y-3">
+                                    {genderCategories.map((category) => (
+                                      <Link
+                                        key={category.id}
+                                        to={`/shop/${category.gender}/${category.title
+                                          .toLowerCase()
+                                          .replace(
+                                            /\s+/g,
+                                            "-",
+                                          )}/${category.id}`}
+                                        className="block py-1 font-montserrat text-sm font-semibold text-fgray transition-colors hover:text-primary"
+                                        onClick={() =>
+                                          setIsShopDropdownOpen(false)
+                                        }
+                                      >
+                                        {category.title}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      to={link.path}
+                      className="text-sm font-semibold text-fgray transition-colors hover:text-primary"
+                    >
+                      {link.name}
+                    </Link>
+                  )}
+                </div>
               ))}
             </div>
 
@@ -224,14 +324,50 @@ function Header() {
               <div className="container mx-auto px-4 py-6">
                 <nav className="space-y-4">
                   {navLinks.map((link) => (
-                    <Link
-                      key={link.name}
-                      to={link.path}
-                      className="block text-lg font-medium text-fgray transition-colors hover:text-primary"
-                      onClick={closeMenu}
-                    >
-                      {link.name}
-                    </Link>
+                    <div key={link.name}>
+                      {link.hasDropdown ? (
+                        <div>
+                          <Link
+                            to={link.path}
+                            className="mb-2 block text-lg font-medium text-fgray transition-colors hover:text-primary"
+                            onClick={closeMenu}
+                          >
+                            {link.name}
+                          </Link>
+                          <div className="ml-4 space-y-2">
+                            {Object.entries(groupedCategories).map(
+                              ([gender, genderCategories]) => (
+                                <div key={gender}>
+                                  <div className="mb-1 font-medium text-fgray">
+                                    {gender}
+                                  </div>
+                                  {genderCategories.map((category) => (
+                                    <Link
+                                      key={category.id}
+                                      to={`/shop/${category.gender}/${category.title
+                                        .toLowerCase()
+                                        .replace(/\s+/g, "-")}/${category.id}`}
+                                      className="ml-2 block font-medium text-fgray transition-colors hover:text-primary"
+                                      onClick={closeMenu}
+                                    >
+                                      {category.title}
+                                    </Link>
+                                  ))}
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <Link
+                          to={link.path}
+                          className="block text-lg font-medium text-fgray transition-colors hover:text-primary"
+                          onClick={closeMenu}
+                        >
+                          {link.name}
+                        </Link>
+                      )}
+                    </div>
                   ))}
                 </nav>
               </div>

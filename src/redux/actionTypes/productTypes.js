@@ -5,3 +5,13 @@ export const SET_FETCH_STATE = "SET_FETCH_STATE";
 export const SET_LIMIT = "SET_LIMIT";
 export const SET_OFFSET = "SET_OFFSET";
 export const SET_FILTER = "SET_FILTER";
+
+// Category fetch action types
+export const FETCH_CATEGORIES_START = "FETCH_CATEGORIES_START";
+export const FETCH_CATEGORIES_SUCCESS = "FETCH_CATEGORIES_SUCCESS";
+export const FETCH_CATEGORIES_ERROR = "FETCH_CATEGORIES_ERROR";
+
+// Products fetch action types
+export const FETCH_PRODUCTS_START = "FETCH_PRODUCTS_START";
+export const FETCH_PRODUCTS_SUCCESS = "FETCH_PRODUCTS_SUCCESS";
+export const FETCH_PRODUCTS_ERROR = "FETCH_PRODUCTS_ERROR";
