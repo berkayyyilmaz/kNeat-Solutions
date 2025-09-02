@@ -198,6 +198,8 @@ const ProductList = ({ categoryId, gender }) => {
               <option value="price:desc">Fiyat: Yüksekten Düşüğe</option>
               <option value="rating:asc">Puan: Düşükten Yükseğe</option>
               <option value="rating:desc">Puan: Yüksekten Düşüğe</option>
+              <option value="sell_count:desc">En Çok Satan</option>
+              <option value="sell_count:asc">En Az Satan</option>
             </select>
           </div>
         </div>
