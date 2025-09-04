@@ -12,6 +12,11 @@ import {
   FETCH_PRODUCTS_START,
   FETCH_PRODUCTS_SUCCESS,
   FETCH_PRODUCTS_ERROR,
+  LOAD_MORE_PRODUCTS_START,
+  LOAD_MORE_PRODUCTS_SUCCESS,
+  LOAD_MORE_PRODUCTS_ERROR,
+  RESET_PRODUCTS,
+  SET_HAS_MORE,
 } from "../actionTypes/productTypes";
 
 const initialState = {
@@ -26,6 +31,9 @@ const initialState = {
   categoriesError: null,
   productsLoading: false,
   productsError: null,
+  loadingMore: false,
+  loadMoreError: null,
+  hasMore: true,
 };
 
 const productReducer = (state = initialState, action) => {
@@ -44,6 +52,16 @@ const productReducer = (state = initialState, action) => {
       return { ...state, offset: action.payload };
     case SET_FILTER:
       return { ...state, filter: action.payload };
+    case SET_HAS_MORE:
+      return { ...state, hasMore: action.payload };
+    case RESET_PRODUCTS:
+      return {
+        ...state,
+        productList: [],
+        offset: 0,
+        hasMore: true,
+        loadMoreError: null,
+      };
     case FETCH_CATEGORIES_START:
       return {
         ...state,
@@ -72,8 +90,8 @@ const productReducer = (state = initialState, action) => {
     case FETCH_PRODUCTS_SUCCESS:
       return {
         ...state,
-        productList: action.payload.products,
-        total: action.payload.total,
+        productList: action.payload.products || [],
+        total: action.payload.total || 0,
         productsLoading: false,
         productsError: null,
       };
@@ -82,6 +100,27 @@ const productReducer = (state = initialState, action) => {
         ...state,
         productsLoading: false,
         productsError: action.payload,
+      };
+    case LOAD_MORE_PRODUCTS_START:
+      return {
+        ...state,
+        loadingMore: true,
+        loadMoreError: null,
+      };
+    case LOAD_MORE_PRODUCTS_SUCCESS:
+      return {
+        ...state,
+        productList: [...state.productList, ...(action.payload.products || [])],
+        total: action.payload.total || state.total,
+        loadingMore: false,
+        loadMoreError: null,
+        offset: state.offset + (action.payload.products?.length || 0),
+      };
+    case LOAD_MORE_PRODUCTS_ERROR:
+      return {
+        ...state,
+        loadingMore: false,
+        loadMoreError: action.payload,
       };
     default:
       return state;

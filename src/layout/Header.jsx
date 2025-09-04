@@ -25,8 +25,11 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false);
+  const [isMobileShopOpen, setIsMobileShopOpen] = useState(false);
   const user = useSelector((state) => state.client.user);
-  const { categories } = useSelector((state) => state.products);
+  const { categories, categoriesLoading } = useSelector(
+    (state) => state.products,
+  );
   const dispatch = useDispatch();
 
   // Shop dropdown için timer ref
@@ -51,6 +54,7 @@ function Header() {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
+    setIsMobileShopOpen(false);
   };
 
   const toggleProfileDropdown = () => {
@@ -76,6 +80,10 @@ function Header() {
   const handleLogout = () => {
     dispatch(logoutUser());
     setIsProfileDropdownOpen(false);
+  };
+
+  const toggleMobileShop = () => {
+    setIsMobileShopOpen((prev) => !prev);
   };
 
   const navLinks = [
@@ -154,9 +162,13 @@ function Header() {
             {/* Logo */}
             <Link
               to="/"
-              className="text-2xl font-bold text-gray-800 transition-colors hover:text-primary md:text-3xl"
+              className="flex items-center transition-opacity hover:opacity-80"
             >
-              KNEAT
+              <img
+                src="/kneat-logo.png"
+                alt="KNEAT"
+                className="h-8 w-auto md:h-10"
+              />
             </Link>
 
             {/* Desktop Navigation */}
@@ -185,33 +197,49 @@ function Header() {
                       {isShopDropdownOpen && (
                         <div className="animate-slideDown absolute left-0 z-50 mt-2 w-96 bg-white py-6 shadow-xl">
                           <div className="grid grid-cols-2 gap-6 px-6">
-                            {Object.entries(groupedCategories).map(
-                              ([gender, genderCategories]) => (
-                                <div key={gender}>
-                                  <h3 className="mb-4 pb-2 font-montserrat text-sm font-bold uppercase tracking-wider text-gray-900">
-                                    {gender}
-                                  </h3>
-                                  <div className="space-y-3">
-                                    {genderCategories.map((category) => (
-                                      <Link
-                                        key={category.id}
-                                        to={`/shop/${category.gender}/${category.title
-                                          .toLowerCase()
-                                          .replace(
-                                            /\s+/g,
-                                            "-",
-                                          )}/${category.id}`}
-                                        className="block py-1 font-montserrat text-sm font-semibold text-fgray transition-colors hover:text-primary"
-                                        onClick={() =>
-                                          setIsShopDropdownOpen(false)
-                                        }
-                                      >
-                                        {category.title}
-                                      </Link>
-                                    ))}
-                                  </div>
+                            {categoriesLoading || categories.length === 0 ? (
+                              // Kategoriler yüklenirken gösterilecek profesyonel mesaj
+                              <div className="col-span-2 py-8 text-center">
+                                <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-primary"></div>
+                                <div className="space-y-2">
+                                  <p className="font-montserrat text-sm font-semibold text-gray-700">
+                                    Kategoriler hazırlanıyor...
+                                  </p>
+                                  <p className="font-montserrat text-xs text-gray-500">
+                                    Sunucumuz başlatılıyor, lütfen birkaç saniye
+                                    bekleyiniz
+                                  </p>
                                 </div>
-                              ),
+                              </div>
+                            ) : (
+                              Object.entries(groupedCategories).map(
+                                ([gender, genderCategories]) => (
+                                  <div key={gender}>
+                                    <h3 className="mb-4 pb-2 font-montserrat text-sm font-bold uppercase tracking-wider text-gray-900">
+                                      {gender}
+                                    </h3>
+                                    <div className="space-y-3">
+                                      {genderCategories.map((category) => (
+                                        <Link
+                                          key={category.id}
+                                          to={`/shop/${category.gender}/${category.title
+                                            .toLowerCase()
+                                            .replace(
+                                              /\s+/g,
+                                              "-",
+                                            )}/${category.id}`}
+                                          className="block py-1 font-montserrat text-sm font-semibold text-fgray transition-colors hover:text-primary"
+                                          onClick={() =>
+                                            setIsShopDropdownOpen(false)
+                                          }
+                                        >
+                                          {category.title}
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ),
+                              )
                             )}
                           </div>
                         </div>
@@ -327,36 +355,68 @@ function Header() {
                     <div key={link.name}>
                       {link.hasDropdown ? (
                         <div>
-                          <Link
-                            to={link.path}
-                            className="mb-2 block text-lg font-medium text-fgray transition-colors hover:text-primary"
-                            onClick={closeMenu}
-                          >
-                            {link.name}
-                          </Link>
-                          <div className="ml-4 space-y-2">
-                            {Object.entries(groupedCategories).map(
-                              ([gender, genderCategories]) => (
-                                <div key={gender}>
-                                  <div className="mb-1 font-medium text-fgray">
-                                    {gender}
-                                  </div>
-                                  {genderCategories.map((category) => (
-                                    <Link
-                                      key={category.id}
-                                      to={`/shop/${category.gender}/${category.title
-                                        .toLowerCase()
-                                        .replace(/\s+/g, "-")}/${category.id}`}
-                                      className="ml-2 block font-medium text-fgray transition-colors hover:text-primary"
-                                      onClick={closeMenu}
-                                    >
-                                      {category.title}
-                                    </Link>
-                                  ))}
-                                </div>
-                              ),
-                            )}
+                          <div className="flex items-center justify-between">
+                            <Link
+                              to={link.path}
+                              className="block text-lg font-medium text-fgray transition-colors hover:text-primary"
+                              onClick={closeMenu}
+                            >
+                              {link.name}
+                            </Link>
+                            <button
+                              onClick={toggleMobileShop}
+                              className="p-2 text-fgray transition-colors hover:text-primary"
+                            >
+                              <ChevronDown
+                                size={20}
+                                className={`transform transition-transform ${
+                                  isMobileShopOpen ? "rotate-180" : ""
+                                }`}
+                              />
+                            </button>
                           </div>
+                          {isMobileShopOpen && (
+                            <div className="ml-4 mt-2 space-y-2">
+                              {categoriesLoading || categories.length === 0 ? (
+                                <div className="py-4 text-center">
+                                  <div className="mx-auto mb-3 h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-primary"></div>
+                                  <div className="space-y-1">
+                                    <p className="text-sm font-medium text-gray-700">
+                                      Kategoriler hazırlanıyor...
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      Sunucumuz başlatılıyor
+                                    </p>
+                                  </div>
+                                </div>
+                              ) : (
+                                Object.entries(groupedCategories).map(
+                                  ([gender, genderCategories]) => (
+                                    <div key={gender}>
+                                      <div className="mb-1 font-medium text-fgray">
+                                        {gender}
+                                      </div>
+                                      {genderCategories.map((category) => (
+                                        <Link
+                                          key={category.id}
+                                          to={`/shop/${category.gender}/${category.title
+                                            .toLowerCase()
+                                            .replace(
+                                              /\s+/g,
+                                              "-",
+                                            )}/${category.id}`}
+                                          className="ml-2 block font-medium text-fgray transition-colors hover:text-primary"
+                                          onClick={closeMenu}
+                                        >
+                                          {category.title}
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  ),
+                                )
+                              )}
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <Link

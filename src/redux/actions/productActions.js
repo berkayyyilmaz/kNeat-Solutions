@@ -12,6 +12,11 @@ import {
   FETCH_PRODUCTS_START,
   FETCH_PRODUCTS_SUCCESS,
   FETCH_PRODUCTS_ERROR,
+  LOAD_MORE_PRODUCTS_START,
+  LOAD_MORE_PRODUCTS_SUCCESS,
+  LOAD_MORE_PRODUCTS_ERROR,
+  RESET_PRODUCTS,
+  SET_HAS_MORE,
 } from "../actionTypes/productTypes";
 import { api } from "../../services/api";
 
@@ -31,6 +36,11 @@ export const setFetchState = (fetchState) => ({
 export const setLimit = (limit) => ({ type: SET_LIMIT, payload: limit });
 export const setOffset = (offset) => ({ type: SET_OFFSET, payload: offset });
 export const setFilter = (filter) => ({ type: SET_FILTER, payload: filter });
+export const setHasMore = (hasMore) => ({
+  type: SET_HAS_MORE,
+  payload: hasMore,
+});
+export const resetProducts = () => ({ type: RESET_PRODUCTS });
 
 // Category action creators
 const fetchCategoriesStart = () => ({
@@ -59,6 +69,21 @@ const fetchProductsSuccess = (data) => ({
 
 const fetchProductsError = (error) => ({
   type: FETCH_PRODUCTS_ERROR,
+  payload: error,
+});
+
+// Load more products action creators
+const loadMoreProductsStart = () => ({
+  type: LOAD_MORE_PRODUCTS_START,
+});
+
+const loadMoreProductsSuccess = (data) => ({
+  type: LOAD_MORE_PRODUCTS_SUCCESS,
+  payload: data,
+});
+
+const loadMoreProductsError = (error) => ({
+  type: LOAD_MORE_PRODUCTS_ERROR,
   payload: error,
 });
 
@@ -115,12 +140,69 @@ export const fetchProducts =
       const response = await api.get(url);
 
       dispatch(fetchProductsSuccess(response.data));
+
+      // Check if there are more products to load
+      const hasMore = response.data.products.length === params.limit;
+      dispatch(setHasMore(hasMore));
     } catch (error) {
       console.error("Ürünler yüklenirken hata oluştu:", error);
       dispatch(
         fetchProductsError(
           error.response?.data?.message ||
             "Ürünler yüklenirken bir hata oluştu",
+        ),
+      );
+    }
+  };
+
+// Thunk action for loading more products (infinite scroll)
+export const loadMoreProducts =
+  (params = {}) =>
+  async (dispatch, getState) => {
+    try {
+      const { products } = getState();
+
+      // If already loading more or no more products to load, return
+      if (products.loadingMore || !products.hasMore) {
+        return;
+      }
+
+      dispatch(loadMoreProductsStart());
+
+      // Query parametrelerini hazırla
+      const queryParams = new URLSearchParams();
+
+      if (params.categoryId) {
+        queryParams.append("category", params.categoryId);
+      }
+      if (params.limit) {
+        queryParams.append("limit", params.limit);
+      }
+      if (params.offset) {
+        queryParams.append("offset", params.offset);
+      }
+      if (params.filter) {
+        queryParams.append("filter", params.filter);
+      }
+      if (params.sort) {
+        queryParams.append("sort", params.sort);
+      }
+
+      const url = `/products${queryParams.toString() ? "?" + queryParams.toString() : ""}`;
+
+      const response = await api.get(url);
+
+      dispatch(loadMoreProductsSuccess(response.data));
+
+      // Check if there are more products to load
+      const hasMore = response.data.products.length === params.limit;
+      dispatch(setHasMore(hasMore));
+    } catch (error) {
+      console.error("Daha fazla ürün yüklenirken hata oluştu:", error);
+      dispatch(
+        loadMoreProductsError(
+          error.response?.data?.message ||
+            "Daha fazla ürün yüklenirken bir hata oluştu",
         ),
       );
     }

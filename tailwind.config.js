@@ -33,6 +33,32 @@ module.exports = {
         h5: "24px",
         h6: "20px",
       },
+      keyframes: {
+        fadeInUp: {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(20px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        fadeOut: {
+          "0%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+          "100%": {
+            opacity: "0",
+            transform: "scale(0.95)",
+          },
+        },
+      },
+      animation: {
+        fadeInUp: "fadeInUp 0.4s ease-out",
+        fadeOut: "fadeOut 0.3s ease-in",
+      },
     },
   },
   plugins: [require("@tailwindcss/line-clamp")],

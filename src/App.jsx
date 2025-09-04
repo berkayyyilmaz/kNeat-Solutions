@@ -17,6 +17,7 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import ContactPage from "./pages/ContactPage";
 import TeamPage from "./pages/TeamPage";
 import AboutPage from "./pages/AboutPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ function App() {
         <Route path="/team" component={TeamPage} />
         <Route path="/about" component={AboutPage} />
       </Switch>
+      <ScrollToTop />
     </Router>
   );
 }

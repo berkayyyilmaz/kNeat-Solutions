@@ -7,24 +7,28 @@ export default function Footer() {
   return (
     <footer className="border-t border-gray-100 bg-white">
       {/* Top Footer Section */}
-      <section className="bg-lightGray py-8">
+      <section className="bg-lightGray py-8 sm:py-10">
         <div className="container mx-auto px-4 lg:px-8 xl:px-12">
-          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row sm:items-center sm:gap-4">
             {/* Logo */}
-            <div className="text-2xl font-bold text-gray-800 md:text-3xl">
-              kNeat
+            <div className="flex items-center">
+              <img
+                src="/kneat-logo2.png"
+                alt="kNeat"
+                className="h-12 w-auto sm:h-10 md:h-12 lg:h-14"
+              />
             </div>
 
             {/* Social Media */}
             <div className="flex items-center space-x-4">
               <button className="rounded-full p-2 text-secondary transition-colors hover:bg-white/50 hover:text-primary">
-                <Facebook size={20} />
+                <Facebook size={24} className="sm:h-5 sm:w-5" />
               </button>
               <button className="rounded-full p-2 text-secondary transition-colors hover:bg-white/50 hover:text-primary">
-                <Twitter size={20} />
+                <Twitter size={24} className="sm:h-5 sm:w-5" />
               </button>
               <button className="rounded-full p-2 text-secondary transition-colors hover:bg-white/50 hover:text-primary">
-                <Instagram size={20} />
+                <Instagram size={24} className="sm:h-5 sm:w-5" />
               </button>
             </div>
           </div>
@@ -32,7 +36,7 @@ export default function Footer() {
       </section>
 
       {/* Main Footer Content */}
-      <section className="py-16">
+      <section className="py-12 sm:py-16">
         <div className="container mx-auto px-4 lg:px-8 xl:px-12">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
             {/* Footer Links */}
