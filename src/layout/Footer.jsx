@@ -15,7 +15,7 @@ export default function Footer() {
               <img
                 src="/kneat-logo2.png"
                 alt="kNeat"
-                className="h-12 w-auto sm:h-10 md:h-12 lg:h-14"
+                className="h-24 w-auto sm:h-20 md:h-24 lg:h-28"
               />
             </div>
 

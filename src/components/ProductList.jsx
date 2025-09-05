@@ -165,7 +165,7 @@ const ProductList = ({ categoryId, gender }) => {
               onClick={() => setViewMode("grid")}
               className={`flex items-center gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${
                 viewMode === "grid"
-                  ? "bg-blue-500 text-white"
+                  ? "bg-primary text-white"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
@@ -176,7 +176,7 @@ const ProductList = ({ categoryId, gender }) => {
               onClick={() => setViewMode("list")}
               className={`flex items-center gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${
                 viewMode === "list"
-                  ? "bg-blue-500 text-white"
+                  ? "bg-primary text-white"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
@@ -199,7 +199,7 @@ const ProductList = ({ categoryId, gender }) => {
               placeholder="Ürün ara..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-10 text-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:w-64"
+              className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-10 text-sm transition-all duration-200 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:w-64"
             />
 
             {/* Arama temizleme butonu */}
@@ -215,7 +215,7 @@ const ProductList = ({ categoryId, gender }) => {
             {/* Arama loading indicator */}
             {isSearching && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <Loader2 size={16} className="animate-spin text-blue-500" />
+                <Loader2 size={16} className="animate-spin text-primary" />
               </div>
             )}
           </div>
@@ -224,7 +224,7 @@ const ProductList = ({ categoryId, gender }) => {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           >
             <option value="">Sırala</option>
             <option value="price:asc">Fiyat: Düşükten Yükseğe</option>
@@ -239,7 +239,7 @@ const ProductList = ({ categoryId, gender }) => {
         <div className="mb-8">
           {productsLoading && productList.length === 0 ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <span className="ml-2 text-gray-600">Ürünler yükleniyor...</span>
             </div>
           ) : productsError ? (
@@ -261,7 +261,7 @@ const ProductList = ({ categoryId, gender }) => {
                       }),
                     );
                   }}
-                  className="mt-4 rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+                  className="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
                 >
                   Tekrar Dene
                 </button>
@@ -285,7 +285,7 @@ const ProductList = ({ categoryId, gender }) => {
               {debouncedSearchTerm.trim() && (
                 <button
                   onClick={clearSearch}
-                  className="mt-4 rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors duration-200 hover:bg-blue-600"
+                  className="mt-4 rounded-lg bg-primary px-4 py-2 text-white transition-colors duration-200 hover:bg-primary/90"
                 >
                   Aramayı Temizle
                 </button>
@@ -348,7 +348,7 @@ const ProductList = ({ categoryId, gender }) => {
               {/* Loading More Indicator */}
               {(loadingMore || isFetching) && (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
                   <span className="ml-2 text-sm text-gray-600">
                     Daha fazla ürün yükleniyor...
                   </span>
@@ -361,7 +361,7 @@ const ProductList = ({ categoryId, gender }) => {
                   <p className="mb-2 text-sm text-red-600">{loadMoreError}</p>
                   <button
                     onClick={loadMore}
-                    className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+                    className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
                   >
                     Tekrar Dene
                   </button>

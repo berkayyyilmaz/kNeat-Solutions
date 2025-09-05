@@ -35,11 +35,11 @@ const ScrollToTop = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="flex h-12 w-12 transform items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-lg transition-all duration-300 ease-in-out hover:scale-105 hover:border-secondary hover:bg-secondary hover:text-white hover:shadow-xl"
+          className="flex h-24 w-24 transform items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-lg transition-all duration-300 ease-in-out hover:scale-105 hover:border-secondary hover:bg-secondary hover:text-white hover:shadow-xl"
           aria-label="Sayfanın üstüne git"
         >
           <svg
-            className="h-6 w-6"
+            className="h-12 w-12"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
