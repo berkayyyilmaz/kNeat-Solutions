@@ -3,10 +3,24 @@ import { useState, useEffect, useCallback } from "react";
 const useInfiniteScroll = (callback, options = {}) => {
   const {
     threshold = 100, // Sayfanın alt kısmından kaç pixel önce callback'i çağır
+    mobileThreshold, // Mobil için özel threshold
     enabled = true, // Hook'u aktif/pasif yapma kontrolü
   } = options;
 
   const [isFetching, setIsFetching] = useState(false);
+
+  // Mobil cihaz algılama
+  const isMobile = useCallback(() => {
+    return window.innerWidth <= 768;
+  }, []);
+
+  // Aktif threshold değerini belirle
+  const getActiveThreshold = useCallback(() => {
+    if (mobileThreshold !== undefined && isMobile()) {
+      return mobileThreshold;
+    }
+    return threshold;
+  }, [threshold, mobileThreshold, isMobile]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -20,8 +34,17 @@ const useInfiniteScroll = (callback, options = {}) => {
       const clientHeight =
         document.documentElement.clientHeight || window.innerHeight;
 
+      // Aktif threshold değerini al
+      const activeThreshold = getActiveThreshold();
+
+      // Sayfa altına ne kadar yakın olduğumuzu hesapla
+      const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+
+      // Debug için (sadece geliştirme sırasında)
+      // console.log('Distance from bottom:', distanceFromBottom, 'Threshold:', activeThreshold, 'isMobile:', isMobile());
+
       // Eğer sayfa altına yakın bir konumdaysak ve henüz fetch işlemi yapılmıyorsa
-      if (scrollTop + clientHeight >= scrollHeight - threshold && !isFetching) {
+      if (distanceFromBottom <= activeThreshold && !isFetching) {
         setIsFetching(true);
       }
     };
@@ -33,7 +56,7 @@ const useInfiniteScroll = (callback, options = {}) => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [threshold, enabled, isFetching]);
+  }, [threshold, enabled, isFetching, getActiveThreshold]);
 
   useEffect(() => {
     if (!isFetching) return;

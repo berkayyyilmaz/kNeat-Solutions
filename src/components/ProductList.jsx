@@ -85,10 +85,22 @@ const ProductList = ({ categoryId, gender }) => {
     productList.length,
   ]);
 
-  // Infinite scroll hook'unu kullan
+  // Mobil cihaz kontrolü
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Infinite scroll hook'unu kullan - sadece web için
   const { isFetching } = useInfiniteScroll(loadMore, {
-    threshold: 500,
-    enabled: hasMore && !productsLoading && !loadingMore,
+    threshold: 500, // Web için threshold
+    enabled: hasMore && !productsLoading && !loadingMore && !isMobile, // Mobilde infinite scroll kapalı
   });
 
   // Arama durumunu kontrol et ve yumuşak geçiş sağla
@@ -268,7 +280,7 @@ const ProductList = ({ categoryId, gender }) => {
               </div>
             </div>
           ) : filteredProducts.length === 0 && !productsLoading ? (
-            <div className="animate-fadeInUp flex flex-col items-center justify-center py-12">
+            <div className="flex animate-fadeInUp flex-col items-center justify-center py-12">
               <div className="mb-4 rounded-full bg-gray-100 p-4">
                 <Search size={32} className="text-gray-400" />
               </div>
@@ -364,6 +376,18 @@ const ProductList = ({ categoryId, gender }) => {
                     className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
                   >
                     Tekrar Dene
+                  </button>
+                </div>
+              )}
+
+              {/* Mobile Load More Button */}
+              {isMobile && hasMore && !loadingMore && !productsLoading && (
+                <div className="flex items-center justify-center py-6">
+                  <button
+                    onClick={loadMore}
+                    className="w-full rounded-lg bg-primary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  >
+                    Daha Fazla Ürün Gör
                   </button>
                 </div>
               )}
