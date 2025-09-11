@@ -17,17 +17,9 @@ export default function Login() {
   const history = useHistory();
   const { user } = useSelector((state) => state.client);
 
-  // Mouse basılı tutma fonksiyonları
-  const handleMouseDown = () => {
-    setShowPassword(true);
-  };
-
-  const handleMouseUp = () => {
-    setShowPassword(false);
-  };
-
-  const handleMouseLeave = () => {
-    setShowPassword(false);
+  // Şifre görünürlüğü toggle fonksiyonu
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   // Sayfa yüklendiğinde mevcut token kontrolü
@@ -154,10 +146,8 @@ export default function Login() {
                   />
                   <button
                     type="button"
-                    onMouseDown={handleMouseDown}
-                    onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseLeave}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 transform select-none text-gray-500 hover:text-gray-700"
+                    onClick={togglePasswordVisibility}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 transform select-none text-gray-500 hover:text-gray-700 focus:outline-none"
                   >
                     {showPassword ? (
                       <svg
