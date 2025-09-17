@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { verifyToken } from "./redux/actions/clientActions";
+import useScrollToTop from "./hooks/useScrollToTop";
 
 import HomePage from "./pages/HomePage";
 import Login from "./pages/LoginPage";
@@ -19,8 +20,12 @@ import TeamPage from "./pages/TeamPage";
 import AboutPage from "./pages/AboutPage";
 import ScrollToTop from "./components/ScrollToTop";
 
-function App() {
+// Router içinde kullanılacak ana app component'i
+function AppContent() {
   const dispatch = useDispatch();
+
+  // Scroll to top hook'unu kullan
+  useScrollToTop();
 
   useEffect(() => {
     // Uygulama başladığında token varsa sessizce doğrula
@@ -34,11 +39,15 @@ function App() {
   }, [dispatch]);
 
   return (
-    <Router>
+    <>
       <Switch>
         <Route path="/" exact component={HomePage} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
+        <Route
+          path="/shop/:gender/:categoryName/:categoryId/:productNameSlug/:productId"
+          component={ProductDetailPage}
+        />
         <Route
           path="/shop/:gender/:categoryName/:categoryId"
           component={Shop}
@@ -50,6 +59,14 @@ function App() {
         <Route path="/about" component={AboutPage} />
       </Switch>
       <ScrollToTop />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

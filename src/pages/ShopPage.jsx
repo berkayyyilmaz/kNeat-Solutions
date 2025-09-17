@@ -107,7 +107,11 @@ export default function ShopPage() {
       )}
 
       {/* Products Section */}
-      <ProductList categoryId={categoryId} gender={gender} />
+      <ProductList
+        categoryId={categoryId}
+        gender={gender}
+        categoryName={categoryName}
+      />
 
       {/* Clients Section */}
       <Clients />

@@ -1,11 +1,19 @@
 import ProductCard from "./ProductCard.jsx";
 import { useState, useEffect, useMemo } from "react";
-import { api } from "../services/api";
+import { useDispatch } from "react-redux";
+import { productApiService } from "../services/api";
+import { fetchCategories } from "../redux/actions/productActions";
 
 export default function BestSeller() {
+  const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Kategorileri yükle
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   // Component mount olduğunda en yüksek puanlı ürünleri yükle
   useEffect(() => {
@@ -15,10 +23,10 @@ export default function BestSeller() {
         setError(null);
 
         // Yeterli sayıda ürün getir ve satış sayısına göre sırala
-        const response = await api.get("/products?limit=100");
+        const data = await productApiService.getProducts({ limit: 100 });
 
         // En çok satan 8 ürünü seç
-        const bestProducts = response.data.products
+        const bestProducts = data.products
           .filter((product) => product.sell_count > 0) // Satış sayısı olan ürünleri filtrele
           .sort((a, b) => b.sell_count - a.sell_count) // Satış sayısına göre büyükten küçüğe sırala
           .slice(0, 8); // İlk 8 ürünü al
@@ -89,6 +97,7 @@ export default function BestSeller() {
                   price={product.price}
                   rating={product.rating}
                   colors={[]}
+                  product={product}
                 />
               </div>
             ))

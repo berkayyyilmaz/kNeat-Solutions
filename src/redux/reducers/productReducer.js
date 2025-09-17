@@ -17,6 +17,10 @@ import {
   LOAD_MORE_PRODUCTS_ERROR,
   RESET_PRODUCTS,
   SET_HAS_MORE,
+  FETCH_PRODUCT_DETAIL_START,
+  FETCH_PRODUCT_DETAIL_SUCCESS,
+  FETCH_PRODUCT_DETAIL_ERROR,
+  SET_CURRENT_PRODUCT,
 } from "../actionTypes/productTypes";
 
 const initialState = {
@@ -34,97 +38,155 @@ const initialState = {
   loadingMore: false,
   loadMoreError: null,
   hasMore: true,
+  // Product detail state
+  currentProduct: null,
+  productDetailLoading: false,
+  productDetailError: null,
+};
+
+// Action Handler Map - OCP'ye uygun: yeni action type'lar eklemek için switch'i değiştirmek gerekmez
+const actionHandlers = {
+  [SET_CATEGORIES]: (state, action) => ({
+    ...state,
+    categories: action.payload,
+  }),
+
+  [SET_PRODUCT_LIST]: (state, action) => ({
+    ...state,
+    productList: action.payload,
+  }),
+
+  [SET_TOTAL]: (state, action) => ({
+    ...state,
+    total: action.payload,
+  }),
+
+  [SET_FETCH_STATE]: (state, action) => ({
+    ...state,
+    fetchState: action.payload,
+  }),
+
+  [SET_LIMIT]: (state, action) => ({
+    ...state,
+    limit: action.payload,
+  }),
+
+  [SET_OFFSET]: (state, action) => ({
+    ...state,
+    offset: action.payload,
+  }),
+
+  [SET_FILTER]: (state, action) => ({
+    ...state,
+    filter: action.payload,
+  }),
+
+  [SET_HAS_MORE]: (state, action) => ({
+    ...state,
+    hasMore: action.payload,
+  }),
+
+  [RESET_PRODUCTS]: (state) => ({
+    ...state,
+    productList: [],
+    offset: 0,
+    hasMore: true,
+    loadMoreError: null,
+  }),
+
+  [FETCH_CATEGORIES_START]: (state) => ({
+    ...state,
+    categoriesLoading: true,
+    categoriesError: null,
+  }),
+
+  [FETCH_CATEGORIES_SUCCESS]: (state, action) => ({
+    ...state,
+    categories: action.payload,
+    categoriesLoading: false,
+    categoriesError: null,
+  }),
+
+  [FETCH_CATEGORIES_ERROR]: (state, action) => ({
+    ...state,
+    categoriesLoading: false,
+    categoriesError: action.payload,
+  }),
+
+  [FETCH_PRODUCTS_START]: (state) => ({
+    ...state,
+    productsLoading: true,
+    productsError: null,
+  }),
+
+  [FETCH_PRODUCTS_SUCCESS]: (state, action) => ({
+    ...state,
+    productList: action.payload.products || [],
+    total: action.payload.total || 0,
+    productsLoading: false,
+    productsError: null,
+  }),
+
+  [FETCH_PRODUCTS_ERROR]: (state, action) => ({
+    ...state,
+    productsLoading: false,
+    productsError: action.payload,
+  }),
+
+  [LOAD_MORE_PRODUCTS_START]: (state) => ({
+    ...state,
+    loadingMore: true,
+    loadMoreError: null,
+  }),
+
+  [LOAD_MORE_PRODUCTS_SUCCESS]: (state, action) => ({
+    ...state,
+    productList: [...state.productList, ...(action.payload.products || [])],
+    total: action.payload.total || state.total,
+    loadingMore: false,
+    loadMoreError: null,
+    offset: state.offset + (action.payload.products?.length || 0),
+  }),
+
+  [LOAD_MORE_PRODUCTS_ERROR]: (state, action) => ({
+    ...state,
+    loadingMore: false,
+    loadMoreError: action.payload,
+  }),
+
+  [FETCH_PRODUCT_DETAIL_START]: (state) => ({
+    ...state,
+    productDetailLoading: true,
+    productDetailError: null,
+  }),
+
+  [FETCH_PRODUCT_DETAIL_SUCCESS]: (state, action) => ({
+    ...state,
+    currentProduct: action.payload,
+    productDetailLoading: false,
+    productDetailError: null,
+  }),
+
+  [FETCH_PRODUCT_DETAIL_ERROR]: (state, action) => ({
+    ...state,
+    productDetailLoading: false,
+    productDetailError: action.payload,
+  }),
+
+  [SET_CURRENT_PRODUCT]: (state, action) => ({
+    ...state,
+    currentProduct: action.payload,
+  }),
+};
+
+// Register new action handler - OCP için yeni handler'lar dinamik olarak eklenebilir
+export const registerActionHandler = (actionType, handler) => {
+  actionHandlers[actionType] = handler;
 };
 
 const productReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case SET_CATEGORIES:
-      return { ...state, categories: action.payload };
-    case SET_PRODUCT_LIST:
-      return { ...state, productList: action.payload };
-    case SET_TOTAL:
-      return { ...state, total: action.payload };
-    case SET_FETCH_STATE:
-      return { ...state, fetchState: action.payload };
-    case SET_LIMIT:
-      return { ...state, limit: action.payload };
-    case SET_OFFSET:
-      return { ...state, offset: action.payload };
-    case SET_FILTER:
-      return { ...state, filter: action.payload };
-    case SET_HAS_MORE:
-      return { ...state, hasMore: action.payload };
-    case RESET_PRODUCTS:
-      return {
-        ...state,
-        productList: [],
-        offset: 0,
-        hasMore: true,
-        loadMoreError: null,
-      };
-    case FETCH_CATEGORIES_START:
-      return {
-        ...state,
-        categoriesLoading: true,
-        categoriesError: null,
-      };
-    case FETCH_CATEGORIES_SUCCESS:
-      return {
-        ...state,
-        categories: action.payload,
-        categoriesLoading: false,
-        categoriesError: null,
-      };
-    case FETCH_CATEGORIES_ERROR:
-      return {
-        ...state,
-        categoriesLoading: false,
-        categoriesError: action.payload,
-      };
-    case FETCH_PRODUCTS_START:
-      return {
-        ...state,
-        productsLoading: true,
-        productsError: null,
-      };
-    case FETCH_PRODUCTS_SUCCESS:
-      return {
-        ...state,
-        productList: action.payload.products || [],
-        total: action.payload.total || 0,
-        productsLoading: false,
-        productsError: null,
-      };
-    case FETCH_PRODUCTS_ERROR:
-      return {
-        ...state,
-        productsLoading: false,
-        productsError: action.payload,
-      };
-    case LOAD_MORE_PRODUCTS_START:
-      return {
-        ...state,
-        loadingMore: true,
-        loadMoreError: null,
-      };
-    case LOAD_MORE_PRODUCTS_SUCCESS:
-      return {
-        ...state,
-        productList: [...state.productList, ...(action.payload.products || [])],
-        total: action.payload.total || state.total,
-        loadingMore: false,
-        loadMoreError: null,
-        offset: state.offset + (action.payload.products?.length || 0),
-      };
-    case LOAD_MORE_PRODUCTS_ERROR:
-      return {
-        ...state,
-        loadingMore: false,
-        loadMoreError: action.payload,
-      };
-    default:
-      return state;
-  }
+  const handler = actionHandlers[action.type];
+  return handler ? handler(state, action) : state;
 };
 
 export default productReducer;

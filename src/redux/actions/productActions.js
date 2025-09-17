@@ -17,8 +17,14 @@ import {
   LOAD_MORE_PRODUCTS_ERROR,
   RESET_PRODUCTS,
   SET_HAS_MORE,
+  FETCH_PRODUCT_DETAIL_START,
+  FETCH_PRODUCT_DETAIL_SUCCESS,
+  FETCH_PRODUCT_DETAIL_ERROR,
+  SET_CURRENT_PRODUCT,
 } from "../actionTypes/productTypes";
-import { api } from "../../services/api";
+import { productApiService } from "../../services/api";
+import FetchProductsStrategy from "./FetchProductsStrategy";
+import LoadMoreProductsStrategy from "./LoadMoreProductsStrategy";
 
 export const setCategories = (categories) => ({
   type: SET_CATEGORIES,
@@ -87,6 +93,26 @@ const loadMoreProductsError = (error) => ({
   payload: error,
 });
 
+// Product detail action creators
+const fetchProductDetailStart = () => ({
+  type: FETCH_PRODUCT_DETAIL_START,
+});
+
+const fetchProductDetailSuccess = (product) => ({
+  type: FETCH_PRODUCT_DETAIL_SUCCESS,
+  payload: product,
+});
+
+const fetchProductDetailError = (error) => ({
+  type: FETCH_PRODUCT_DETAIL_ERROR,
+  payload: error,
+});
+
+export const setCurrentProduct = (product) => ({
+  type: SET_CURRENT_PRODUCT,
+  payload: product,
+});
+
 // Thunk action for fetching categories
 export const fetchCategories = () => async (dispatch, getState) => {
   const { categories } = getState().products;
@@ -96,8 +122,8 @@ export const fetchCategories = () => async (dispatch, getState) => {
 
   try {
     dispatch(fetchCategoriesStart());
-    const response = await api.get("/categories");
-    dispatch(fetchCategoriesSuccess(response.data));
+    const data = await productApiService.getCategories();
+    dispatch(fetchCategoriesSuccess(data));
   } catch (error) {
     console.error("Kategoriler yüklenirken hata oluştu:", error);
     dispatch(
@@ -109,101 +135,35 @@ export const fetchCategories = () => async (dispatch, getState) => {
   }
 };
 
-// Thunk action for fetching products
+// LSP-compliant thunk action for fetching products
 export const fetchProducts =
   (params = {}) =>
-  async (dispatch) => {
-    try {
-      dispatch(fetchProductsStart());
-
-      // Query parametrelerini hazırla
-      const queryParams = new URLSearchParams();
-
-      if (params.categoryId) {
-        queryParams.append("category", params.categoryId);
-      }
-      if (params.limit) {
-        queryParams.append("limit", params.limit);
-      }
-      if (params.offset) {
-        queryParams.append("offset", params.offset);
-      }
-      if (params.filter) {
-        queryParams.append("filter", params.filter);
-      }
-      if (params.sort) {
-        queryParams.append("sort", params.sort);
-      }
-
-      const url = `/products${queryParams.toString() ? "?" + queryParams.toString() : ""}`;
-
-      const response = await api.get(url);
-
-      dispatch(fetchProductsSuccess(response.data));
-
-      // Check if there are more products to load
-      const hasMore = response.data.products.length === params.limit;
-      dispatch(setHasMore(hasMore));
-    } catch (error) {
-      console.error("Ürünler yüklenirken hata oluştu:", error);
-      dispatch(
-        fetchProductsError(
-          error.response?.data?.message ||
-            "Ürünler yüklenirken bir hata oluştu",
-        ),
-      );
-    }
+  async (dispatch, getState) => {
+    const strategy = new FetchProductsStrategy();
+    return strategy.execute(dispatch, getState, params);
   };
 
-// Thunk action for loading more products (infinite scroll)
+// LSP-compliant thunk action for loading more products (infinite scroll)
 export const loadMoreProducts =
   (params = {}) =>
   async (dispatch, getState) => {
-    try {
-      const { products } = getState();
-
-      // If already loading more or no more products to load, return
-      if (products.loadingMore || !products.hasMore) {
-        return;
-      }
-
-      dispatch(loadMoreProductsStart());
-
-      // Query parametrelerini hazırla
-      const queryParams = new URLSearchParams();
-
-      if (params.categoryId) {
-        queryParams.append("category", params.categoryId);
-      }
-      if (params.limit) {
-        queryParams.append("limit", params.limit);
-      }
-      if (params.offset) {
-        queryParams.append("offset", params.offset);
-      }
-      if (params.filter) {
-        queryParams.append("filter", params.filter);
-      }
-      if (params.sort) {
-        queryParams.append("sort", params.sort);
-      }
-
-      const url = `/products${queryParams.toString() ? "?" + queryParams.toString() : ""}`;
-
-      const response = await api.get(url);
-
-      dispatch(loadMoreProductsSuccess(response.data));
-
-      // Check if there are more products to load
-      const hasMore = response.data.products.length === params.limit;
-      dispatch(setHasMore(hasMore));
-    } catch (error) {
-      console.error("Daha fazla ürün yüklenirken hata oluştu:", error);
-      dispatch(
-        loadMoreProductsError(
-          error.response?.data?.message ||
-            "Daha fazla ürün yüklenirken bir hata oluştu",
-        ),
-      );
-    }
+    const strategy = new LoadMoreProductsStrategy();
+    return strategy.execute(dispatch, getState, params);
   };
+
+// Thunk action for fetching product detail
+export const fetchProductDetail = (productId) => async (dispatch) => {
+  try {
+    dispatch(fetchProductDetailStart());
+    const data = await productApiService.getProductById(productId);
+    dispatch(fetchProductDetailSuccess(data));
+  } catch (error) {
+    console.error("Ürün detayı yüklenirken hata oluştu:", error);
+    dispatch(
+      fetchProductDetailError(
+        error.response?.data?.message ||
+          "Ürün detayı yüklenirken bir hata oluştu",
+      ),
+    );
+  }
+};

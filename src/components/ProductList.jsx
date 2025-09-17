@@ -1,16 +1,16 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import ProductCard from "./ProductCard";
-import { LayoutGrid, List, Loader2, Search, X } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   fetchProducts,
   loadMoreProducts,
   resetProducts,
 } from "../redux/actions/productActions";
 import useInfiniteScroll from "../hooks/useInfiniteScroll";
-import useDebounce from "../hooks/useDebounce";
+import ProductFilters from "./product/ProductFilters";
+import ProductGrid from "./product/ProductGrid";
 
-const ProductList = ({ categoryId, gender }) => {
+const ProductList = ({ categoryId, gender, categoryName }) => {
   const dispatch = useDispatch();
   const {
     productList,
@@ -27,12 +27,8 @@ const ProductList = ({ categoryId, gender }) => {
   const [viewMode, setViewMode] = useState("grid");
   const [sort, setSort] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [showProducts, setShowProducts] = useState(true);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [productsPerPage] = useState(12);
-
-  // Debounced search term - kullanıcı yazmayı bıraktıktan 300ms sonra arama yapar
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   // İlk yüklemede ve sadece kategori/sıralama değiştiğinde ürünleri yükle
   useEffect(() => {
@@ -103,16 +99,14 @@ const ProductList = ({ categoryId, gender }) => {
     enabled: hasMore && !productsLoading && !loadingMore && !isMobile, // Mobilde infinite scroll kapalı
   });
 
-  // Arama durumunu kontrol et ve yumuşak geçiş sağla
-  useEffect(() => {
-    if (searchTerm !== debouncedSearchTerm && searchTerm.trim()) {
-      setIsSearching(true);
-      setShowProducts(false);
-    } else {
-      setIsSearching(false);
-      setTimeout(() => setShowProducts(true), 150);
-    }
-  }, [searchTerm, debouncedSearchTerm]);
+  // Search term handler - ProductFilters componentinden gelecek
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+  };
+
+  const handleDebouncedSearchChange = (debouncedTerm) => {
+    setDebouncedSearchTerm(debouncedTerm);
+  };
 
   // Client-side arama ve filtreleme
   const filteredProducts = useMemo(() => {
@@ -135,7 +129,7 @@ const ProductList = ({ categoryId, gender }) => {
   // Arama temizleme fonksiyonu
   const clearSearch = () => {
     setSearchTerm("");
-    setIsSearching(false);
+    setDebouncedSearchTerm("");
   };
 
   const getHeaderTitle = () => {
@@ -170,239 +164,38 @@ const ProductList = ({ categoryId, gender }) => {
             </h2>
             <p className="mt-1 text-sm text-gray-600">{getResultsText()}</p>
           </div>
-
-          {/* View Mode Toggle */}
-          <div className="flex items-center gap-2 rounded-lg border border-gray-200 p-1">
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`flex items-center gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${
-                viewMode === "grid"
-                  ? "bg-primary text-white"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              <LayoutGrid size={16} />
-              Grid
-            </button>
-            <button
-              onClick={() => setViewMode("list")}
-              className={`flex items-center gap-2 rounded px-3 py-2 text-sm font-medium transition-colors ${
-                viewMode === "list"
-                  ? "bg-primary text-white"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              <List size={16} />
-              Liste
-            </button>
-          </div>
         </div>
 
         {/* Filters */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {/* Search Filter */}
-          <div className="relative">
-            <Search
-              size={20}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-            <input
-              type="text"
-              placeholder="Ürün ara..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-10 text-sm transition-all duration-200 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:w-64"
-            />
-
-            {/* Arama temizleme butonu */}
-            {searchTerm && !isSearching && (
-              <button
-                onClick={clearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200 hover:text-gray-600"
-              >
-                <X size={16} />
-              </button>
-            )}
-
-            {/* Arama loading indicator */}
-            {isSearching && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <Loader2 size={16} className="animate-spin text-primary" />
-              </div>
-            )}
-          </div>
-
-          {/* Sort Dropdown */}
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            <option value="">Sırala</option>
-            <option value="price:asc">Fiyat: Düşükten Yükseğe</option>
-            <option value="price:desc">Fiyat: Yüksekten Düşüğe</option>
-            <option value="rating:desc">En Yüksek Puan</option>
-            <option value="name:asc">İsim: A-Z</option>
-            <option value="name:desc">İsim: Z-A</option>
-          </select>
-        </div>
+        <ProductFilters
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          onDebouncedSearchChange={handleDebouncedSearchChange}
+          onClearSearch={clearSearch}
+          sortValue={sort}
+          onSortChange={setSort}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+        />
 
         {/* Products Grid/List */}
-        <div className="mb-8">
-          {productsLoading && productList.length === 0 ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="ml-2 text-gray-600">Ürünler yükleniyor...</span>
-            </div>
-          ) : productsError ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <div className="text-center">
-                <h3 className="text-lg font-medium text-gray-900">
-                  Ürünler yüklenirken bir hata oluştu
-                </h3>
-                <p className="mt-1 text-sm text-gray-600">{productsError}</p>
-                <button
-                  onClick={() => {
-                    dispatch(resetProducts());
-                    dispatch(
-                      fetchProducts({
-                        limit: productsPerPage,
-                        offset: 0,
-                        categoryId,
-                        sort,
-                      }),
-                    );
-                  }}
-                  className="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
-                >
-                  Tekrar Dene
-                </button>
-              </div>
-            </div>
-          ) : filteredProducts.length === 0 && !productsLoading ? (
-            <div className="flex animate-fadeInUp flex-col items-center justify-center py-12">
-              <div className="mb-4 rounded-full bg-gray-100 p-4">
-                <Search size={32} className="text-gray-400" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900">
-                {debouncedSearchTerm.trim()
-                  ? "Aradığınız ürün bulunamadı"
-                  : "Ürün bulunamadı"}
-              </h3>
-              <p className="mt-1 max-w-md text-center text-sm text-gray-600">
-                {debouncedSearchTerm.trim()
-                  ? `"${debouncedSearchTerm}" için sonuç bulunamadı. Farklı anahtar kelimeler deneyin.`
-                  : "Arama kriterlerinize uygun ürün bulunamadı."}
-              </p>
-              {debouncedSearchTerm.trim() && (
-                <button
-                  onClick={clearSearch}
-                  className="mt-4 rounded-lg bg-primary px-4 py-2 text-white transition-colors duration-200 hover:bg-primary/90"
-                >
-                  Aramayı Temizle
-                </button>
-              )}
-            </div>
-          ) : (
-            <div
-              className={`transition-opacity duration-300 ${showProducts && !isSearching ? "opacity-100" : "opacity-0"}`}
-            >
-              {viewMode === "grid" ? (
-                <div className="grid grid-cols-1 gap-6 transition-all duration-300 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {filteredProducts.map((product, index) => (
-                    <div
-                      key={product.id}
-                      className="animate-fadeInUp opacity-0"
-                      style={{
-                        animationDelay: `${index * 30}ms`,
-                        animationFillMode: "forwards",
-                      }}
-                    >
-                      <ProductCard
-                        id={product.id}
-                        image={product.images?.[0]?.url}
-                        title={product.name}
-                        department={product.category?.title || "Genel"}
-                        price={product.price}
-                        rating={product.rating}
-                        colors={[]}
-                        viewType={viewMode}
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-4 transition-all duration-300">
-                  {filteredProducts.map((product, index) => (
-                    <div
-                      key={product.id}
-                      className="animate-fadeInUp opacity-0"
-                      style={{
-                        animationDelay: `${index * 30}ms`,
-                        animationFillMode: "forwards",
-                      }}
-                    >
-                      <ProductCard
-                        id={product.id}
-                        image={product.images?.[0]?.url}
-                        title={product.name}
-                        department={product.category?.title || "Genel"}
-                        price={product.price}
-                        rating={product.rating}
-                        colors={[]}
-                        viewType={viewMode}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Loading More Indicator */}
-              {(loadingMore || isFetching) && (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  <span className="ml-2 text-sm text-gray-600">
-                    Daha fazla ürün yükleniyor...
-                  </span>
-                </div>
-              )}
-
-              {/* Load More Error */}
-              {loadMoreError && (
-                <div className="flex flex-col items-center justify-center py-8">
-                  <p className="mb-2 text-sm text-red-600">{loadMoreError}</p>
-                  <button
-                    onClick={loadMore}
-                    className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
-                  >
-                    Tekrar Dene
-                  </button>
-                </div>
-              )}
-
-              {/* Mobile Load More Button */}
-              {isMobile && hasMore && !loadingMore && !productsLoading && (
-                <div className="flex items-center justify-center py-6">
-                  <button
-                    onClick={loadMore}
-                    className="w-full rounded-lg bg-primary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                  >
-                    Daha Fazla Ürün Gör
-                  </button>
-                </div>
-              )}
-
-              {/* No More Products Message */}
-              {!hasMore && filteredProducts.length > 0 && !loadingMore && (
-                <div className="flex items-center justify-center py-8">
-                  <p className="text-sm text-gray-600">
-                    Tüm ürünler yüklendi ({filteredProducts.length} ürün)
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        <ProductGrid
+          products={filteredProducts}
+          viewMode={viewMode}
+          loading={productsLoading}
+          error={productsError}
+          searchTerm={debouncedSearchTerm}
+          onClearSearch={clearSearch}
+          loadingMore={loadingMore || isFetching}
+          loadMoreError={loadMoreError}
+          hasMore={hasMore}
+          isMobile={isMobile}
+          onLoadMore={loadMore}
+          gender={gender}
+          categoryName={categoryName}
+          categoryId={categoryId}
+          className="mb-8"
+        />
       </div>
     </section>
   );
