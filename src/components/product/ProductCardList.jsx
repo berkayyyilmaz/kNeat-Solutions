@@ -1,6 +1,7 @@
 import React from "react";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart } from "lucide-react";
 import StarRating from "../ui/StarRating";
+import useAddToCartFeedback from "../../hooks/useAddToCartFeedback";
 
 const ProductCardList = ({
   id,
@@ -16,18 +17,14 @@ const ProductCardList = ({
   onAddToWishlist,
   className = "",
 }) => {
+  const { isAdded } = useAddToCartFeedback({ successMs: 1200 });
   // İndirim yüzdesini hesapla
   const discountPercentage =
     oldPrice && price < oldPrice
       ? Math.round(((oldPrice - price) / oldPrice) * 100)
       : 0;
 
-  const handleAddToCart = (e) => {
-    e.stopPropagation();
-    if (onAddToCart) {
-      onAddToCart({ id, title, price, image });
-    }
-  };
+  // List görünümünde sepete ekleme devre dışı; kullanıcı ürün detayına yönlendirilecek
 
   const handleAddToWishlist = (e) => {
     e.stopPropagation();
@@ -105,16 +102,7 @@ const ProductCardList = ({
                 ₺{price}
               </span>
             </div>
-            <button
-              onClick={handleAddToCart}
-              className="flex flex-shrink-0 items-center space-x-1 rounded-lg bg-primary px-2 py-1.5 text-white transition-colors hover:bg-primary/90 sm:space-x-2 sm:px-4 sm:py-2"
-            >
-              <ShoppingCart size={14} className="sm:h-4 sm:w-4" />
-              <span className="hidden text-xs font-medium sm:inline sm:text-sm">
-                Sepete Ekle
-              </span>
-              <span className="text-xs font-medium sm:hidden">Ekle</span>
-            </button>
+            {/* Sepete ekle butonu kaldırıldı */}
           </div>
 
           {colors && colors.length > 0 && (

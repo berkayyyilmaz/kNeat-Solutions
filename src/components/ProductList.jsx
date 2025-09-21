@@ -9,6 +9,9 @@ import {
 import useInfiniteScroll from "../hooks/useInfiniteScroll";
 import ProductFilters from "./product/ProductFilters";
 import ProductGrid from "./product/ProductGrid";
+import { PAGINATION, UI } from "../constants";
+import { DataTransformers } from "../models/dataModels";
+import { ProductFactory } from "../models/dataFactories";
 
 const ProductList = ({ categoryId, gender, categoryName }) => {
   const dispatch = useDispatch();
@@ -26,11 +29,10 @@ const ProductList = ({ categoryId, gender, categoryName }) => {
 
   const [viewMode, setViewMode] = useState("grid");
   const [sort, setSort] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [productsPerPage] = useState(12);
+  const [filter, setFilter] = useState(""); //  Filter state eklendi
+  const [productsPerPage] = useState(PAGINATION.PRODUCTS_PER_PAGE);
 
-  // İlk yüklemede ve sadece kategori/sıralama değiştiğinde ürünleri yükle
+  //  API parametreleri: category, filter, sort değiştiğinde yeni GET request
   useEffect(() => {
     dispatch(resetProducts());
 
@@ -39,18 +41,25 @@ const ProductList = ({ categoryId, gender, categoryName }) => {
       offset: 0,
     };
 
+    //  Doğru API parameter: category (categoryId değil!)
     if (categoryId) {
-      params.categoryId = categoryId;
+      params.category = categoryId;
     }
 
+    //  Filter parametresi
+    if (filter.trim()) {
+      params.filter = filter.trim();
+    }
+
+    //  Sort parametresi
     if (sort) {
       params.sort = sort;
     }
 
     dispatch(fetchProducts(params));
-  }, [dispatch, categoryId, sort, productsPerPage]);
+  }, [dispatch, categoryId, filter, sort, productsPerPage]); //  filter dependency eklendi
 
-  // Infinite scroll callback fonksiyonu
+  //  LoadMore ile aynı parametreleri koru (category + filter + sort)
   const loadMore = useCallback(async () => {
     if (!hasMore || loadingMore || productsLoading) {
       return;
@@ -61,10 +70,17 @@ const ProductList = ({ categoryId, gender, categoryName }) => {
       offset: productList.length,
     };
 
+    //  Aynı parametreleri koru - category
     if (categoryId) {
-      params.categoryId = categoryId;
+      params.category = categoryId;
     }
 
+    //  Aynı parametreleri koru - filter
+    if (filter.trim()) {
+      params.filter = filter.trim();
+    }
+
+    //  Aynı parametreleri koru - sort
     if (sort) {
       params.sort = sort;
     }
@@ -73,6 +89,7 @@ const ProductList = ({ categoryId, gender, categoryName }) => {
   }, [
     dispatch,
     categoryId,
+    filter, //  filter dependency eklendi
     sort,
     productsPerPage,
     hasMore,
@@ -82,11 +99,13 @@ const ProductList = ({ categoryId, gender, categoryName }) => {
   ]);
 
   // Mobil cihaz kontrolü
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(
+    window.innerWidth <= UI.MOBILE_BREAKPOINT,
+  );
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= UI.MOBILE_BREAKPOINT);
     };
 
     window.addEventListener("resize", handleResize);
@@ -95,44 +114,14 @@ const ProductList = ({ categoryId, gender, categoryName }) => {
 
   // Infinite scroll hook'unu kullan - sadece web için
   const { isFetching } = useInfiniteScroll(loadMore, {
-    threshold: 500, // Web için threshold
+    threshold: UI.INFINITE_SCROLL_THRESHOLD,
     enabled: hasMore && !productsLoading && !loadingMore && !isMobile, // Mobilde infinite scroll kapalı
   });
 
-  // Search term handler - ProductFilters componentinden gelecek
-  const handleSearchChange = (term) => {
-    setSearchTerm(term);
-  };
+  // Artık sadece API filter kullanılıyor, local search kaldırıldı
 
-  const handleDebouncedSearchChange = (debouncedTerm) => {
-    setDebouncedSearchTerm(debouncedTerm);
-  };
-
-  // Client-side arama ve filtreleme
-  const filteredProducts = useMemo(() => {
-    let filtered = [...productList];
-
-    if (debouncedSearchTerm.trim()) {
-      const searchLower = debouncedSearchTerm.toLowerCase().trim();
-      filtered = filtered.filter((product) => {
-        return (
-          product.name?.toLowerCase().includes(searchLower) ||
-          product.description?.toLowerCase().includes(searchLower) ||
-          product.category?.title?.toLowerCase().includes(searchLower)
-        );
-      });
-    }
-
-    return filtered;
-  }, [productList, debouncedSearchTerm]);
-
-  // Arama temizleme fonksiyonu
-  const clearSearch = () => {
-    setSearchTerm("");
-    setDebouncedSearchTerm("");
-  };
-
-  const getHeaderTitle = () => {
+  //  Expensive calculation memoized
+  const headerTitle = useMemo(() => {
     if (categoryId) {
       return "Kategori Ürünleri";
     }
@@ -140,18 +129,19 @@ const ProductList = ({ categoryId, gender, categoryName }) => {
       return gender === "k" ? "Kadın Ürünleri" : "Erkek Ürünleri";
     }
     return "Tüm Ürünler";
-  };
+  }, [categoryId, gender]);
 
-  const getResultsText = () => {
-    const currentCount = filteredProducts.length;
-    if (debouncedSearchTerm.trim()) {
-      return `"${debouncedSearchTerm}" için ${currentCount} ürün bulundu`;
+  //  Results text memoized
+  const resultsText = useMemo(() => {
+    const currentCount = productList.length;
+    if (filter.trim()) {
+      return `"${filter}" için ${currentCount} ürün bulundu`;
     }
     if (total > 0) {
       return `${currentCount} / ${total} ürün gösteriliyor`;
     }
     return `${currentCount} ürün gösteriliyor`;
-  };
+  }, [productList.length, total, filter]);
 
   return (
     <section className="bg-white py-12">
@@ -160,32 +150,28 @@ const ProductList = ({ categoryId, gender, categoryName }) => {
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
-              {getHeaderTitle()}
+              {headerTitle}
             </h2>
-            <p className="mt-1 text-sm text-gray-600">{getResultsText()}</p>
+            <p className="mt-1 text-sm text-gray-600">{resultsText}</p>
           </div>
         </div>
 
         {/* Filters */}
         <ProductFilters
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-          onDebouncedSearchChange={handleDebouncedSearchChange}
-          onClearSearch={clearSearch}
           sortValue={sort}
           onSortChange={setSort}
+          filter={filter}
+          onFilterChange={setFilter}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
         />
 
         {/* Products Grid/List */}
         <ProductGrid
-          products={filteredProducts}
+          products={productList}
           viewMode={viewMode}
           loading={productsLoading}
           error={productsError}
-          searchTerm={debouncedSearchTerm}
-          onClearSearch={clearSearch}
           loadingMore={loadingMore || isFetching}
           loadMoreError={loadMoreError}
           hasMore={hasMore}
@@ -201,4 +187,5 @@ const ProductList = ({ categoryId, gender, categoryName }) => {
   );
 };
 
-export default ProductList;
+//  Export memoized component
+export default React.memo(ProductList);

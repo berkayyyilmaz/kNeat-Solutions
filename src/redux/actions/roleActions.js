@@ -1,4 +1,5 @@
 import api from "../../services/api";
+import { defaultCatchHandler } from "../../utils/errorHandler";
 import {
   GET_ROLES_REQUEST,
   GET_ROLES_SUCCESS,
@@ -32,11 +33,8 @@ export const getRoles = () => async (dispatch, getState) => {
     const response = await api.get("/roles");
     dispatch(getRolesSuccess(response.data));
   } catch (error) {
-    console.error("Roller yüklenirken hata oluştu:", error);
-    dispatch(
-      getRolesFailure(
-        error.response?.data?.message || "Roller yüklenirken bir hata oluştu",
-      ),
-    );
+    //  Ortak error handler kullan
+    const errorMessage = defaultCatchHandler(error, "ROLE_FETCH");
+    dispatch(getRolesFailure(errorMessage));
   }
 };

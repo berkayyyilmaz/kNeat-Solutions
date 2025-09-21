@@ -98,18 +98,19 @@ const ProductGrid = ({
               }
             >
               <ProductCard
-                id={product.id}
-                image={product.images?.[0]?.url}
-                title={product.name}
-                department={product.category?.title || "Genel"}
-                price={product.price}
-                rating={product.rating}
-                colors={[]}
-                viewType={viewMode}
-                gender={gender}
-                categoryName={categoryName}
-                categoryId={categoryId}
-                product={product}
+                productData={product}
+                displayOptions={{ viewType: viewMode }}
+                // navigationData boş bırakıldı - ProductNavigation hook'u ürün verisinden otomatik çıkaracak
+                // Ancak URL parametreleri varsa onları da geçelim
+                navigationData={
+                  gender || categoryName || categoryId
+                    ? {
+                        gender,
+                        categoryName,
+                        categoryId,
+                      }
+                    : {}
+                }
               />
             </div>
           ))}
@@ -133,18 +134,19 @@ const ProductGrid = ({
             }
           >
             <ProductCard
-              id={product.id}
-              image={product.images?.[0]?.url}
-              title={product.name}
-              department={product.category?.title || "Genel"}
-              price={product.price}
-              rating={product.rating}
-              colors={[]}
-              viewType={viewMode}
-              gender={gender}
-              categoryName={categoryName}
-              categoryId={categoryId}
-              product={product}
+              productData={product}
+              displayOptions={{ viewType: viewMode }}
+              // navigationData boş bırakıldı - ProductNavigation hook'u ürün verisinden otomatik çıkaracak
+              // Ancak URL parametreleri varsa onları da geçelim
+              navigationData={
+                gender || categoryName || categoryId
+                  ? {
+                      gender,
+                      categoryName,
+                      categoryId,
+                    }
+                  : {}
+              }
             />
           </div>
         ))}

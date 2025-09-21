@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createSafeMarkup, SANITIZE_PRESETS } from "../../utils/sanitizer";
 
 const ProductTabs = ({ product, className = "" }) => {
   const [activeTab, setActiveTab] = useState("description");
@@ -28,7 +29,7 @@ const ProductTabs = ({ product, className = "" }) => {
           { label: "Mağaza ID", value: product.store_id },
           {
             label: "Satış Sayısı",
-            value: `${product.sell_count} adet satıldı`,
+            value: `${product.sellCount ?? product.sell_count ?? 0} adet satıldı`,
           },
         ],
       },
@@ -66,9 +67,12 @@ const ProductTabs = ({ product, className = "" }) => {
       <div className="py-8">
         {activeTab === "description" && (
           <div className="prose max-w-none">
-            <p className="leading-relaxed text-gray-700">
-              {tabContents.description.content}
-            </p>
+            <div
+              className="leading-relaxed text-gray-700"
+              dangerouslySetInnerHTML={createSafeMarkup(
+                tabContents.description.content,
+              )}
+            />
           </div>
         )}
 

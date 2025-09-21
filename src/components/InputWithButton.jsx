@@ -21,7 +21,7 @@ const InputWithButton = ({
       await onSubmit(inputValue);
       setInputValue("");
     } catch (error) {
-      console.error("Submission error:", error);
+      // İsterseniz burada da ortak error handler kullanabilirsiniz
     } finally {
       setIsSubmitting(false);
     }

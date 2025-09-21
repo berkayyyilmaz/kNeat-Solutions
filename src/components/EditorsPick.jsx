@@ -1,4 +1,5 @@
 import React from "react";
+import { STRINGS } from "../constants/strings";
 import men from "../assets/editorspick/men.png";
 import women from "../assets/editorspick/women.png";
 import accessories from "../assets/editorspick/accessories.png";
@@ -7,22 +8,22 @@ import kid from "../assets/editorspick/kid.png";
 const EditorsPick = () => {
   const categories = [
     {
-      title: "MEN",
+      title: STRINGS.HOME.EDITORS_PICK_CATEGORIES.MEN,
       image: men,
       className: "col-span-2 row-span-2",
     },
     {
-      title: "WOMEN",
+      title: STRINGS.HOME.EDITORS_PICK_CATEGORIES.WOMEN,
       image: women,
       className: "col-span-1 row-span-2",
     },
     {
-      title: "ACCESSORIES",
+      title: STRINGS.HOME.EDITORS_PICK_CATEGORIES.ACCESSORIES,
       image: accessories,
       className: "col-span-1 row-span-1",
     },
     {
-      title: "KIDS",
+      title: STRINGS.HOME.EDITORS_PICK_CATEGORIES.KIDS,
       image: kid,
       className: "col-span-1 row-span-1",
     },
@@ -34,10 +35,10 @@ const EditorsPick = () => {
         {/* Section Header */}
         <div className="mb-12 text-center">
           <h1 className="mb-4 text-2xl font-bold text-gray-900 md:text-3xl">
-            EDITOR'S PICK
+            {STRINGS.HOME.EDITORS_PICK_TITLE}
           </h1>
           <p className="mx-auto max-w-md text-fgray">
-            Problems trying to resolve the conflict between
+            {STRINGS.HOME.EDITORS_PICK_SUBTITLE}
           </p>
         </div>
 

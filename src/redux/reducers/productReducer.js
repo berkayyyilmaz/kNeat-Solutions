@@ -21,13 +21,17 @@ import {
   FETCH_PRODUCT_DETAIL_SUCCESS,
   FETCH_PRODUCT_DETAIL_ERROR,
   SET_CURRENT_PRODUCT,
+  FETCH_BESTSELLERS_START,
+  FETCH_BESTSELLERS_SUCCESS,
+  FETCH_BESTSELLERS_ERROR,
 } from "../actionTypes/productTypes";
+import { PAGINATION } from "../../constants";
 
 const initialState = {
   categories: [],
   productList: [],
   total: 0,
-  limit: 25,
+  limit: PAGINATION.DEFAULT_LIMIT,
   offset: 0,
   filter: "",
   fetchState: "NOT_FETCHED",
@@ -42,6 +46,10 @@ const initialState = {
   currentProduct: null,
   productDetailLoading: false,
   productDetailError: null,
+  // Bestsellers state
+  bestsellers: [],
+  bestsellersLoading: false,
+  bestsellersError: null,
 };
 
 // Action Handler Map - OCP'ye uygun: yeni action type'lar eklemek için switch'i değiştirmek gerekmez
@@ -176,6 +184,26 @@ const actionHandlers = {
   [SET_CURRENT_PRODUCT]: (state, action) => ({
     ...state,
     currentProduct: action.payload,
+  }),
+
+  // Bestsellers handlers
+  [FETCH_BESTSELLERS_START]: (state) => ({
+    ...state,
+    bestsellersLoading: true,
+    bestsellersError: null,
+  }),
+
+  [FETCH_BESTSELLERS_SUCCESS]: (state, action) => ({
+    ...state,
+    bestsellers: action.payload || [],
+    bestsellersLoading: false,
+    bestsellersError: null,
+  }),
+
+  [FETCH_BESTSELLERS_ERROR]: (state, action) => ({
+    ...state,
+    bestsellersLoading: false,
+    bestsellersError: action.payload,
   }),
 };
 

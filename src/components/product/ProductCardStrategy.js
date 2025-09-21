@@ -16,7 +16,6 @@ export const getProductCardStrategy = (viewType) => {
   const strategy = VIEW_TYPE_STRATEGIES[viewType];
 
   if (!strategy) {
-    console.warn(`Unknown viewType: ${viewType}, falling back to grid`);
     return VIEW_TYPE_STRATEGIES.grid;
   }
 

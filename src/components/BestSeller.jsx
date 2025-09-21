@@ -1,47 +1,43 @@
+import React from "react";
 import ProductCard from "./ProductCard.jsx";
-import { useState, useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
-import { productApiService } from "../services/api";
-import { fetchCategories } from "../redux/actions/productActions";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchCategories,
+  fetchBestSellers,
+} from "../redux/actions/productActions";
+import { STRINGS } from "../constants/strings";
 
-export default function BestSeller() {
+const BestSeller = () => {
   const dispatch = useDispatch();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { bestsellers, bestsellersLoading, bestsellersError } = useSelector(
+    (state) => state.products,
+  );
+
+  //  Mount status tracking
+  const isMountedRef = useRef(true);
+  const abortControllerRef = useRef(null);
+
+  //  Set mounted status on unmount
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      //  Abort ongoing requests
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   // Kategorileri yükle
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  // Component mount olduğunda en yüksek puanlı ürünleri yükle
+  // Component mount olduğunda bestseller'ları Redux ile yükle
   useEffect(() => {
-    const fetchBestSellerProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Yeterli sayıda ürün getir ve satış sayısına göre sırala
-        const data = await productApiService.getProducts({ limit: 100 });
-
-        // En çok satan 8 ürünü seç
-        const bestProducts = data.products
-          .filter((product) => product.sell_count > 0) // Satış sayısı olan ürünleri filtrele
-          .sort((a, b) => b.sell_count - a.sell_count) // Satış sayısına göre büyükten küçüğe sırala
-          .slice(0, 8); // İlk 8 ürünü al
-
-        setProducts(bestProducts);
-      } catch (error) {
-        console.error("Bestseller ürünler yüklenirken hata oluştu:", error);
-        setError("Bestseller ürünler yüklenirken bir hata oluştu");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBestSellerProducts();
-  }, []); // Sadece component mount'ta çalışsın
+    dispatch(fetchBestSellers());
+  }, [dispatch]);
 
   return (
     <section className="bg-white py-16">
@@ -49,10 +45,10 @@ export default function BestSeller() {
         {/* Section Header */}
         <div className="mb-12 text-center">
           <h4 className="mb-2 text-sm font-medium uppercase tracking-wide text-fgray">
-            Featured Products
+            {STRINGS.HOME.BESTSELLER_BADGE}
           </h4>
           <h3 className="mb-4 text-2xl font-bold text-gray-900 md:text-3xl">
-            BESTSELLER PRODUCTS
+            {STRINGS.HOME.BESTSELLER_TITLE}
           </h3>
           <p className="mx-auto max-w-md text-fgray">
             En çok satan ürünlerimizi keşfedin
@@ -61,7 +57,7 @@ export default function BestSeller() {
 
         {/* Products Grid */}
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:grid-cols-4">
-          {loading ? (
+          {bestsellersLoading ? (
             // Loading skeleton'ları
             Array.from({ length: 8 }).map((_, index) => (
               <div key={index} className="flex justify-center">
@@ -75,10 +71,10 @@ export default function BestSeller() {
                 </div>
               </div>
             ))
-          ) : error ? (
+          ) : bestsellersError ? (
             // Error durumu
             <div className="col-span-full py-12 text-center">
-              <p className="mb-4 text-red-500">{error}</p>
+              <p className="mb-4 text-red-500">{bestsellersError}</p>
               <button
                 onClick={() => window.location.reload()}
                 className="rounded-lg bg-primary px-4 py-2 text-white transition-colors hover:bg-primary/90"
@@ -86,18 +82,16 @@ export default function BestSeller() {
                 Tekrar Dene
               </button>
             </div>
-          ) : products.length > 0 ? (
-            products.map((product) => (
+          ) : bestsellers.length > 0 ? (
+            bestsellers.map((product) => (
               <div key={product.id} className="flex justify-center">
                 <ProductCard
-                  id={product.id}
-                  image={product.images?.[0]?.url}
-                  title={product.name}
-                  department={product.category?.title || "Genel"}
-                  price={product.price}
-                  rating={product.rating}
-                  colors={[]}
-                  product={product}
+                  productData={product}
+                  displayOptions={{ viewType: "grid" }}
+                  // Navigation bilgilerini direkt prop olarak geç
+                  gender={product.gender || product.category?.gender}
+                  categoryName={product.category?.title}
+                  categoryId={product.category?.id || product.categoryId}
                 />
               </div>
             ))
@@ -111,4 +105,7 @@ export default function BestSeller() {
       </div>
     </section>
   );
-}
+};
+
+//  Export memoized component
+export default React.memo(BestSeller);

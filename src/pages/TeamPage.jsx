@@ -1,6 +1,7 @@
 import React from "react";
 import PageContent from "../layout/PageContent";
 import { Mail, Linkedin, Github, ExternalLink } from "lucide-react";
+import { STRINGS } from "../constants/strings";
 
 export default function TeamPage() {
   const teamMembers = [
@@ -39,11 +40,10 @@ export default function TeamPage() {
       <section className="bg-white py-12 md:py-20">
         <div className="container mx-auto px-4 text-center lg:px-8 xl:px-12">
           <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
-            Meet Our Team
+            {STRINGS.TEAM.HERO_TITLE}
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-fgray">
-            Get to know the talented professionals behind kNeat who bring
-            passion, expertise, and innovation to every project.
+            {STRINGS.TEAM.HERO_P}
           </p>
         </div>
       </section>
@@ -130,29 +130,27 @@ export default function TeamPage() {
                 3
               </div>
               <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                Team Members
+                {STRINGS.TEAM.STATS.MEMBERS_TITLE}
               </h3>
-              <p className="text-fgray">
-                Experienced and passionate professionals
-              </p>
+              <p className="text-fgray">{STRINGS.TEAM.STATS.MEMBERS_P}</p>
             </div>
             <div className="group">
               <div className="mb-4 text-4xl font-bold text-primary transition-colors duration-300 group-hover:text-primary/80">
                 1
               </div>
               <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                Active Project
+                {STRINGS.TEAM.STATS.PROJECTS_TITLE}
               </h3>
-              <p className="text-fgray">E-commerce platform development</p>
+              <p className="text-fgray">{STRINGS.TEAM.STATS.PROJECTS_P}</p>
             </div>
             <div className="group">
               <div className="mb-4 text-4xl font-bold text-primary transition-colors duration-300 group-hover:text-primary/80">
                 100%
               </div>
               <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                Success Rate
+                {STRINGS.TEAM.STATS.SUCCESS_TITLE}
               </h3>
-              <p className="text-fgray">Quality delivery on time</p>
+              <p className="text-fgray">{STRINGS.TEAM.STATS.SUCCESS_P}</p>
             </div>
           </div>
         </div>
@@ -162,16 +160,14 @@ export default function TeamPage() {
       <section className="bg-secondary py-12 md:py-16">
         <div className="container mx-auto px-4 text-center lg:px-8 xl:px-12">
           <h2 className="mb-4 text-3xl font-bold text-white">
-            Want to Work With Us?
+            {STRINGS.TEAM.CTA_TITLE}
           </h2>
-          <p className="mb-8 text-lg text-white/90">
-            Join our talented team and let's create amazing projects together.
-          </p>
+          <p className="mb-8 text-lg text-white/90">{STRINGS.TEAM.CTA_P}</p>
           <a
             href="/contact"
             className="inline-block rounded-lg bg-white px-8 py-3 font-semibold text-secondary transition-all duration-300 hover:bg-gray-100 hover:shadow-lg"
           >
-            Get In Touch
+            {STRINGS.TEAM.CTA_BUTTON}
           </a>
         </div>
       </section>

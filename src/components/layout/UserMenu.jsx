@@ -28,7 +28,7 @@ const UserMenu = ({ className = "" }) => {
       >
         <User size={20} />
         <span className="hidden text-sm font-medium lg:inline">
-          Login / Register
+          Giriş / Kayıt Ol
         </span>
       </Link>
     );

@@ -9,6 +9,7 @@ import ProductInfo from "../components/product/ProductInfo";
 import ProductTabs from "../components/product/ProductTabs";
 import BestSeller from "../components/BestSeller";
 import Clients from "../components/Clients";
+import { addToCart } from "../redux/actions/shoppingCartActions";
 
 export default function ProductDetailPage() {
   const { productId, id, gender, categoryName, categoryId } = useParams();
@@ -26,19 +27,23 @@ export default function ProductDetailPage() {
 
   // Sepete ekleme fonksiyonu
   const handleAddToCart = (product, selectedSize) => {
-    console.log("Sepete ekleniyor:", product, "Beden:", selectedSize);
-    // TODO: Redux action ile sepete ekleme işlemi
+    if (!product) return;
+    dispatch(
+      addToCart({
+        product,
+        size: selectedSize ?? null,
+        count: 1,
+      }),
+    );
   };
 
   // Favorilere ekleme fonksiyonu
   const handleAddToWishlist = (product) => {
-    console.log("Favorilere ekleniyor:", product);
     // TODO: Redux action ile favorilere ekleme işlemi
   };
 
   // Hızlı görünüm fonksiyonu
   const handleQuickView = (product) => {
-    console.log("Hızlı görünüm:", product);
     // TODO: Modal açma işlemi
   };
 

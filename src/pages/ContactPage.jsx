@@ -21,7 +21,6 @@ export default function ContactPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Form gönderme işlemi burada yapılacak
-    console.log("Form Data:", formData);
     // Form reset
     setFormData({
       name: "",

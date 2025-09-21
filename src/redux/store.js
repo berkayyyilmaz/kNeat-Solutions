@@ -1,6 +1,6 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
-import { thunk } from "redux-thunk";
 import { createLogger } from "redux-logger";
+import { productApiService, userApiService } from "../services/api";
 
 // Import reducers
 import clientReducer from "./reducers/clientReducer";
@@ -17,9 +17,40 @@ const rootReducer = combineReducers({
 });
 
 // Middleware
-const logger = createLogger();
+// redux-logger'i env'e göre koşullu ekle
+const logger = createLogger({
+  predicate: () => {
+    try {
+      const raw =
+        typeof import.meta !== "undefined" && import.meta.env
+          ? import.meta.env.VITE_REDUX_LOGGER
+          : undefined;
+      const normalized = String(raw ?? "false").toLowerCase();
+      const enabled = !["false", "0", "off", "no", ""].includes(normalized);
+      return enabled;
+    } catch (_) {
+      return false;
+    }
+  },
+});
 
 // Store
-const store = createStore(rootReducer, applyMiddleware(thunk, logger));
+// Custom thunk middleware: function action'ları (thunk) destekler ve extra argüman enjekte eder
+const injectedThunk =
+  ({ dispatch, getState }) =>
+  (next) =>
+  (action) => {
+    if (typeof action === "function") {
+      return action(dispatch, getState, { productApiService, userApiService });
+    }
+    return next(action);
+  };
+
+const middlewares = [injectedThunk];
+if (logger) {
+  middlewares.push(logger);
+}
+
+const store = createStore(rootReducer, applyMiddleware(...middlewares));
 
 export default store;

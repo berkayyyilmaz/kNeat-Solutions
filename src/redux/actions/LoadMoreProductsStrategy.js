@@ -5,6 +5,8 @@ import {
   LOAD_MORE_PRODUCTS_ERROR,
   SET_HAS_MORE,
 } from "../actionTypes/productTypes";
+import { DataTransformers } from "../../models/dataModels";
+import { ProductFactory } from "../../models/dataFactories";
 
 // Concrete strategy for loading more products (infinite scroll)
 class LoadMoreProductsStrategy extends BaseProductFetchingStrategy {
@@ -32,8 +34,16 @@ class LoadMoreProductsStrategy extends BaseProductFetchingStrategy {
   }
 
   processResponse(data) {
-    // LoadMore için response'u direkt döner (reducer'da append edilir)
-    return data;
+    //  API response'ı normalize ve ProductModel'e transform et
+    const normalizedData = DataTransformers.normalizeApiResponse(data);
+    const transformedProducts = ProductFactory.fromApiResponseList(
+      normalizedData.products || [],
+    );
+
+    return {
+      products: transformedProducts,
+      total: normalizedData.total || 0,
+    };
   }
 
   postFetchOperations(dispatch, data, params) {

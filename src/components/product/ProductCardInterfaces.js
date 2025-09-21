@@ -1,27 +1,24 @@
 // ISP-compliant interfaces for ProductCard
+//  Updated to use centralized data models
 
-// Product Data Interface - sadece ürün verisi ile ilgili props
-export const createProductData = ({
-  id,
-  image,
-  title,
-  department,
-  price,
-  oldPrice = null,
-  rating = 0,
-  colors = [],
-  product = null,
-}) => ({
-  id,
-  image,
-  title,
-  department,
-  price,
-  oldPrice,
-  rating,
-  colors,
-  product,
-});
+import { ProductModel } from "../../models/dataModels";
+import { ProductFactory } from "../../models/dataFactories";
+
+// Product Data Interface - centralized data model kullanıyor
+export const createProductData = (input) => {
+  // Eğer ProductModel instance'ı ise direkt döndür
+  if (input instanceof ProductModel) {
+    return input;
+  }
+
+  // Legacy format'tan ProductModel oluştur
+  if (input && typeof input === "object") {
+    return ProductFactory.fromLegacyCardFormat(input);
+  }
+
+  // Fallback - boş ProductModel
+  return new ProductModel();
+};
 
 // Display Options Interface - sadece görünüm ile ilgili props
 export const createDisplayOptions = ({ viewType = "grid" }) => ({
@@ -46,10 +43,23 @@ export const createProductCardProps = ({
   navigationData,
 });
 
-// Validation helpers
+// Validation helpers - updated to use ProductModel
 export const validateProductData = (productData) => {
-  if (!productData.id || !productData.title || !productData.price) {
-    console.warn("ProductCard: Required product data missing", productData);
+  // ProductModel instance'ı ise built-in validation kullan
+  if (productData instanceof ProductModel) {
+    const isValid = productData.isValid();
+    if (!isValid) {
+    }
+    return isValid;
+  }
+
+  // Legacy validation for backward compatibility
+  if (
+    !productData ||
+    !productData.id ||
+    (!productData.title && !productData.name) ||
+    productData.price === undefined
+  ) {
     return false;
   }
   return true;
@@ -58,10 +68,6 @@ export const validateProductData = (productData) => {
 export const validateDisplayOptions = (displayOptions) => {
   const validViewTypes = ["grid", "list"];
   if (!validViewTypes.includes(displayOptions.viewType)) {
-    console.warn(
-      `ProductCard: Invalid viewType ${displayOptions.viewType}`,
-      displayOptions,
-    );
     return false;
   }
   return true;

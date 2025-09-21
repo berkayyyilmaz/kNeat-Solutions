@@ -1,77 +1,82 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { UI } from "../constants";
 
 const useInfiniteScroll = (callback, options = {}) => {
   const {
-    threshold = 100, // Sayfanın alt kısmından kaç pixel önce callback'i çağır
-    mobileThreshold, // Mobil için özel threshold
-    enabled = true, // Hook'u aktif/pasif yapma kontrolü
+    threshold = UI.INFINITE_SCROLL_THRESHOLD,
+    mobileThreshold,
+    enabled = true,
   } = options;
 
   const [isFetching, setIsFetching] = useState(false);
 
-  // Mobil cihaz algılama
-  const isMobile = useCallback(() => {
-    return window.innerWidth <= 768;
-  }, []);
+  //  Stable callback reference
+  const stableCallback = useRef(callback);
+  useEffect(() => {
+    stableCallback.current = callback;
+  }, [callback]);
 
-  // Aktif threshold değerini belirle
-  const getActiveThreshold = useCallback(() => {
-    if (mobileThreshold !== undefined && isMobile()) {
-      return mobileThreshold;
+  //  Memoized scroll handler - stable reference for cleanup
+  const handleScroll = useCallback(() => {
+    if (!enabled) return;
+
+    const scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    const scrollHeight =
+      document.documentElement.scrollHeight || document.body.scrollHeight;
+    const clientHeight =
+      document.documentElement.clientHeight || window.innerHeight;
+
+    // Aktif threshold değerini belirle
+    const activeThreshold =
+      mobileThreshold !== undefined && window.innerWidth <= UI.MOBILE_BREAKPOINT
+        ? mobileThreshold
+        : threshold;
+
+    const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
+
+    if (distanceFromBottom <= activeThreshold && !isFetching) {
+      setIsFetching(true);
     }
-    return threshold;
-  }, [threshold, mobileThreshold, isMobile]);
+  }, [threshold, mobileThreshold, enabled, isFetching]);
 
+  //  Event listener with proper cleanup
   useEffect(() => {
     if (!enabled) return;
 
-    const handleScroll = () => {
-      // Sayfa yükseliği ile scroll pozisyonunu kontrol et
-      const scrollTop =
-        document.documentElement.scrollTop || document.body.scrollTop;
-      const scrollHeight =
-        document.documentElement.scrollHeight || document.body.scrollHeight;
-      const clientHeight =
-        document.documentElement.clientHeight || window.innerHeight;
-
-      // Aktif threshold değerini al
-      const activeThreshold = getActiveThreshold();
-
-      // Sayfa altına ne kadar yakın olduğumuzu hesapla
-      const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
-
-      // Debug için (sadece geliştirme sırasında)
-      // console.log('Distance from bottom:', distanceFromBottom, 'Threshold:', activeThreshold, 'isMobile:', isMobile());
-
-      // Eğer sayfa altına yakın bir konumdaysak ve henüz fetch işlemi yapılmıyorsa
-      if (distanceFromBottom <= activeThreshold && !isFetching) {
-        setIsFetching(true);
-      }
-    };
-
-    // Scroll event listener'ı ekle
+    //  Add listener
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Cleanup function
+    //  Cleanup function - exact same reference guaranteed
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [threshold, enabled, isFetching, getActiveThreshold]);
+  }, [handleScroll, enabled]); //  Minimal dependencies
 
+  //  Async callback handling
   useEffect(() => {
     if (!isFetching) return;
 
-    // Callback'i çağır ve işlem bitince isFetching'i false yap
+    let isCanceled = false; //  Cancellation flag
+
     const fetchData = async () => {
       try {
-        await callback();
+        await stableCallback.current();
       } finally {
-        setIsFetching(false);
+        //  Only update state if component is still mounted
+        if (!isCanceled) {
+          setIsFetching(false);
+        }
       }
     };
 
     fetchData();
-  }, [isFetching, callback]);
+
+    //  Cleanup - cancel ongoing operations
+    return () => {
+      isCanceled = true;
+    };
+  }, [isFetching]);
 
   const reset = useCallback(() => {
     setIsFetching(false);

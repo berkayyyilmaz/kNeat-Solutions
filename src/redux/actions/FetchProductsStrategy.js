@@ -5,6 +5,8 @@ import {
   FETCH_PRODUCTS_ERROR,
   SET_HAS_MORE,
 } from "../actionTypes/productTypes";
+import { DataTransformers } from "../../models/dataModels";
+import { ProductFactory } from "../../models/dataFactories";
 
 // Concrete strategy for initial product fetching
 class FetchProductsStrategy extends BaseProductFetchingStrategy {
@@ -26,8 +28,16 @@ class FetchProductsStrategy extends BaseProductFetchingStrategy {
   }
 
   processResponse(data) {
-    // İlk fetch için response'u direkt döner
-    return data;
+    //  API response'ı normalize ve ProductModel'e transform et
+    const normalizedData = DataTransformers.normalizeApiResponse(data);
+    const transformedProducts = ProductFactory.fromApiResponseList(
+      normalizedData.products || [],
+    );
+
+    return {
+      products: transformedProducts,
+      total: normalizedData.total || 0,
+    };
   }
 
   postFetchOperations(dispatch, data, params) {

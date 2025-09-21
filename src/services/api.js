@@ -10,11 +10,22 @@ export const api = axios.create({
   baseURL: "https://workintech-fe-ecommerce.onrender.com",
 });
 
-// Başlangıçta token varsa header'a ekle
-const initialToken = localStorage.getItem("userToken");
-if (initialToken) {
-  api.defaults.headers.Authorization = initialToken;
-}
+//  Güvenli token initialization
+import SecureStorage from "../utils/secureStorage";
+
+// Başlangıçta güvenli storage'dan token al
+const initializeToken = () => {
+  const token = SecureStorage.getToken();
+  if (token) {
+    api.defaults.headers.Authorization = `Bearer ${token}`;
+  }
+};
+
+// XSS protection'ı etkinleştir
+SecureStorage.enableXSSProtection();
+
+// Token'ı initialize et
+initializeToken();
 
 // DIP-compliant API setup
 const axiosImplementation = new AxiosApiImplementation(api);

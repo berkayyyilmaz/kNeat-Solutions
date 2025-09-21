@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart } from "lucide-react";
 import StarRating from "../ui/StarRating";
 
 const ProductCardGrid = ({
@@ -21,13 +21,6 @@ const ProductCardGrid = ({
     oldPrice && price < oldPrice
       ? Math.round(((oldPrice - price) / oldPrice) * 100)
       : 0;
-
-  const handleAddToCart = (e) => {
-    e.stopPropagation();
-    if (onAddToCart) {
-      onAddToCart({ id, title, price, image });
-    }
-  };
 
   const handleAddToWishlist = (e) => {
     e.stopPropagation();
@@ -67,16 +60,7 @@ const ProductCardGrid = ({
             <Heart size={18} className="text-gray-600 hover:text-red-500" />
           </button>
 
-          {/* Hızlı görünüm overlay */}
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            <button
-              onClick={handleAddToCart}
-              className="flex w-full items-center justify-center space-x-2 rounded-lg bg-white px-4 py-2 font-medium text-gray-900 transition-colors hover:bg-gray-100"
-            >
-              <ShoppingCart size={16} />
-              <span>Sepete Ekle</span>
-            </button>
-          </div>
+          {/* Hover overlay intentionally removed to force add-to-cart on product detail page */}
         </div>
       </div>
 

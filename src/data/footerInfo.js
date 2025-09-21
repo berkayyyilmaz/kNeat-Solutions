@@ -1,23 +1,23 @@
 export const footerInfo = [
   {
-    title: "Company Info",
-    links: ["About Us", "Carrier", "We are Hiring", "Blog"],
+    title: "Şirket Bilgileri",
+    links: ["Hakkımızda", "Kariyer", "Ekibe Katılın", "Blog"],
   },
   {
-    title: "Legal",
-    links: ["About Us", "Carrier", "We are Hiring", "Blog"],
+    title: "Yasal",
+    links: ["Hakkımızda", "Kariyer", "Ekibe Katılın", "Blog"],
   },
   {
-    title: "Features",
+    title: "Özellikler",
     links: [
-      "Business Marketing",
-      "User Analytic",
-      "Live Chat",
-      "Unlimited Support",
+      "İş Pazarlaması",
+      "Kullanıcı Analitiği",
+      "Canlı Sohbet",
+      "Sınırsız Destek",
     ],
   },
   {
-    title: "Resources",
-    links: ["IOS & Android", "Watch a Demo", "Customers", "API"],
+    title: "Kaynaklar",
+    links: ["iOS & Android", "Demo İzle", "Müşteriler", "API"],
   },
 ];

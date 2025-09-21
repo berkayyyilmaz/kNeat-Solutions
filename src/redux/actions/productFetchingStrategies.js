@@ -1,4 +1,4 @@
-import { productApiService } from "../../services/api";
+import { logAndConsoleError, ApiErrorHandler } from "../../utils/errorHandler";
 
 // Base Product Fetching Strategy - LSP'ye uygun common interface
 class BaseProductFetchingStrategy {
@@ -11,7 +11,7 @@ class BaseProductFetchingStrategy {
   }
 
   // Template method - tüm subclass'lar aynı akışı takip eder
-  async execute(dispatch, getState, params = {}) {
+  async execute(dispatch, getState, params = {}, { productApiService } = {}) {
     try {
       // Pre-fetch validation (subclass'lar override edebilir)
       if (!this.validateFetch(getState, params)) {
@@ -31,12 +31,15 @@ class BaseProductFetchingStrategy {
       // Post-fetch operations (hasMore check, etc.)
       this.postFetchOperations(dispatch, data, params);
     } catch (error) {
-      console.error(this.getErrorMessage(), error);
-      dispatch(
-        this.getErrorAction(
-          error.response?.data?.message || this.getDefaultErrorMessage(),
-        ),
+      //  Ortak error handler kullan
+      logAndConsoleError(this.getErrorMessage(), error, "PRODUCT_FETCHING");
+
+      const errorMessage = ApiErrorHandler.extractMessage(
+        error,
+        this.getDefaultErrorMessage(),
       );
+
+      dispatch(this.getErrorAction(errorMessage));
     }
   }
 

@@ -41,12 +41,11 @@ export const useProductNavigation = () => {
           urlCategoryName = createSlug(product.category.title);
           urlGender = product.category.gender || "k";
         }
-        // Eğer category objesi yoksa category_id ile categories listesinden bul
-        else if (product.category_id) {
+        // Eğer category objesi yoksa category_id veya categoryId ile categories listesinden bul
+        else if (product.category_id || product.categoryId) {
+          const rawCategoryId = product.category_id || product.categoryId;
           if (categories.length > 0) {
-            const category = categories.find(
-              (cat) => cat.id === product.category_id,
-            );
+            const category = categories.find((cat) => cat.id === rawCategoryId);
             if (category) {
               urlCategoryId = category.id;
               urlCategoryName = createSlug(category.title);
@@ -54,7 +53,7 @@ export const useProductNavigation = () => {
             }
           } else {
             // Kategoriler henüz yüklenmemişse varsayılan değerler kullan
-            urlCategoryId = product.category_id;
+            urlCategoryId = rawCategoryId;
             urlCategoryName = createSlug(department || "genel");
             urlGender = "k"; // varsayılan
           }

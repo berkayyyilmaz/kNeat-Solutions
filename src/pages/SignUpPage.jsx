@@ -6,19 +6,31 @@ import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getRoles } from "../redux/actions/roleActions";
 
+//  Ortak validation ve component import'ları
+import {
+  emailValidationEn,
+  passwordValidationEn,
+  nameValidation,
+  phoneValidation,
+  storeNameValidation,
+  taxIdValidation,
+  ibanValidation,
+} from "../utils/validation";
+import FormInput from "../components/ui/FormInput";
+import PasswordInput from "../components/ui/PasswordInput";
+import FormButton from "../components/ui/FormButton";
+import { STRINGS } from "../constants/strings";
+
+//  Ortak error handling
+import { handleApiError, ErrorContextMessages } from "../utils/errorHandler";
+
 export default function SignUp() {
   const [selectedRole, setSelectedRole] = useState("customer");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
-
-  // Şifre görünürlüğü toggle fonksiyonu
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
 
   // Redux'tan rolleri ve loading/error durumlarını al
   const {
@@ -98,10 +110,13 @@ export default function SignUp() {
         });
       }, 3000);
     } catch (error) {
-      setError(
-        error.response?.data?.message ||
-          "An error occurred during registration",
+      //  Ortak error handler kullan
+      const errorMessage = handleApiError(
+        error,
+        "SIGNUP",
+        ErrorContextMessages.SIGNUP,
       );
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -130,15 +145,14 @@ export default function SignUp() {
               />
             </Link>
             <div className="block sm:hidden">
-              <p>Seamless neat,</p> <p>perfectly knit.</p>
+              <p>{STRINGS.LOGIN.TAGLINE_LINE1}</p>{" "}
+              <p>{STRINGS.LOGIN.TAGLINE_LINE2}</p>
             </div>
-            <div className="hidden sm:block">
-              Seamless neat, perfectly knit.
-            </div>
+            <div className="hidden sm:block">{STRINGS.LOGIN.TAGLINE_FULL}</div>
           </div>
           <div className="h-fit w-full max-w-md space-y-6 rounded-sm bg-white p-8 shadow-md">
             <h2 className="text-center text-2xl font-bold text-secondary">
-              Sign Up
+              Kayıt Ol
             </h2>
 
             {rolesError && (
@@ -148,146 +162,56 @@ export default function SignUp() {
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  {...register("name", {
-                    required: "Name is required",
-                    minLength: {
-                      value: 3,
-                      message: "Name must be at least 3 characters",
-                    },
-                  })}
-                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
-                  placeholder="Your Full Name"
-                />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
+              {/*  Name Input - Ortak component kullanıyor */}
+              <FormInput
+                id="name"
+                type="text"
+                label="Ad Soyad"
+                placeholder="Adınız Soyadınız"
+                register={register}
+                validation={nameValidation}
+                error={errors.name}
+                autoComplete="name"
+                required
+              />
 
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  E-mail
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Please enter a valid email address",
-                    },
-                  })}
-                  className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
-                  placeholder="Your Mail"
-                />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
+              {/*  Email Input - Ortak component kullanıyor */}
+              <FormInput
+                id="email"
+                type="email"
+                label={STRINGS.LOGIN.EMAIL_LABEL}
+                placeholder={STRINGS.LOGIN.EMAIL_PLACEHOLDER}
+                register={register}
+                validation={emailValidationEn}
+                error={errors.email}
+                autoComplete="email"
+                required
+              />
 
+              {/*  Password Input - Ortak component kullanıyor */}
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Password
-                </label>
                 <div className="mb-2 text-xs text-gray-600">
-                  Password must contain at least 8 characters, including uppercase, lowercase, number, and special character
+                  Şifre en az 8 karakter olmalı; büyük/küçük harf, rakam ve özel
+                  karakter içermelidir.
                 </div>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    {...register("password", {
-                      required: "Password is required",
-                      minLength: {
-                        value: 8,
-                        message: "Password must be at least 8 characters",
-                      },
-                      pattern: {
-                        value:
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                        message:
-                          "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
-                      },
-                    })}
-                    className="mt-1 block w-full rounded-md border border-gray-300 p-2 pr-10 focus:outline-none focus:ring focus:ring-secondary"
-                    placeholder="Your Password"
-                  />
-                  <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 transform select-none text-gray-500 hover:text-gray-700 focus:outline-none"
-                  >
-                    {showPassword ? (
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 11-4.243-4.243m4.243 4.243L9.88 9.88"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.password.message}
-                  </p>
-                )}
+                <PasswordInput
+                  id="password"
+                  label={STRINGS.LOGIN.PASSWORD_LABEL}
+                  placeholder={STRINGS.LOGIN.PASSWORD_PLACEHOLDER}
+                  register={register}
+                  validation={passwordValidationEn}
+                  error={errors.password}
+                  autoComplete="new-password"
+                  required
+                />
               </div>
-
 
               <div>
                 <label
                   htmlFor="role"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Role
+                  Rol
                 </label>
                 <select
                   id="role"
@@ -319,20 +243,20 @@ export default function SignUp() {
                       htmlFor="storeName"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Store Name
+                      Mağaza Adı
                     </label>
                     <input
                       type="text"
                       id="storeName"
                       {...register("store_name", {
-                        required: "Store name is required",
+                        required: "Mağaza adı zorunludur",
                         minLength: {
                           value: 3,
-                          message: "Store name must be at least 3 characters",
+                          message: "Mağaza adı en az 3 karakter olmalıdır",
                         },
                       })}
                       className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
-                      placeholder="Store Name"
+                      placeholder="Mağaza Adı"
                     />
                     {errors.store_name && (
                       <p className="mt-1 text-sm text-red-500">
@@ -341,49 +265,35 @@ export default function SignUp() {
                     )}
                   </div>
 
-                  <div>
-                    <label
-                      htmlFor="storePhone"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Store Phone
-                    </label>
-                    <input
-                      type="tel"
-                      id="storePhone"
-                      {...register("store_phone", {
-                        required: "Phone number is required",
-                        pattern: {
-                          value: /^(\+90|0)?[0-9]{10}$/,
-                          message: "Please enter a valid phone number",
-                        },
-                      })}
-                      className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
-                      placeholder="+90 XXX XXX XX XX"
-                    />
-                    {errors.store_phone && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.store_phone.message}
-                      </p>
-                    )}
-                  </div>
+                  {/*  Store Phone Input - Ortak component kullanıyor */}
+                  <FormInput
+                    id="store_phone"
+                    type="tel"
+                    label="Mağaza Telefonu"
+                    placeholder="+90 XXX XXX XX XX"
+                    register={register}
+                    validation={phoneValidation}
+                    error={errors.store_phone}
+                    autoComplete="tel"
+                    required
+                  />
 
                   <div>
                     <label
                       htmlFor="taxId"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Tax ID
+                      Vergi No
                     </label>
                     <input
                       type="text"
                       id="taxId"
                       {...register("tax_no", {
-                        required: "Tax ID is required",
+                        required: "Vergi no zorunludur",
                         pattern: {
                           value: /^T\d{4}V\d{6}$/,
                           message:
-                            "Please enter a valid Tax ID (Format: TXXXXVXXXXXX)",
+                            "Geçerli bir Vergi No giriniz (Biçim: TXXXXVXXXXXX)",
                         },
                       })}
                       className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
@@ -401,17 +311,17 @@ export default function SignUp() {
                       htmlFor="bankAccount"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Bank Account (IBAN)
+                      Banka Hesabı (IBAN)
                     </label>
                     <input
                       type="text"
                       id="bankAccount"
                       {...register("bank_account", {
-                        required: "IBAN is required",
+                        required: "IBAN zorunludur",
                         pattern: {
                           value:
                             /^TR[0-9]{2}[0-9]{4}[0-9]{4}[0-9]{4}[0-9]{4}[0-9]{4}[0-9]{2}$/,
-                          message: "Please enter a valid IBAN number",
+                          message: "Geçerli bir IBAN giriniz",
                         },
                       })}
                       className="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-secondary"
@@ -438,28 +348,27 @@ export default function SignUp() {
                 </div>
               )}
 
-              <button
+              {/*  Submit Button - Ortak component kullanıyor */}
+              <FormButton
                 type="submit"
-                disabled={isLoading || success}
-                className="mt-4 w-full rounded-md bg-primary py-2 text-white focus:outline-none focus:ring focus:ring-secondary disabled:opacity-50"
+                disabled={success}
+                loading={isLoading}
+                loadingText="Kayıt yapılıyor..."
+                className="mt-4"
+                variant="primary"
+                size="md"
+                fullWidth
               >
-                {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                    <span className="ml-2">Registering...</span>
-                  </div>
-                ) : (
-                  "Sign Up"
-                )}
-              </button>
+                Kayıt Ol
+              </FormButton>
             </form>
             <div className="mt-4 text-center">
-              <span className="text-gray-600">Already have an account? </span>
+              <span className="text-gray-600">Zaten hesabınız var mı? </span>
               <Link
                 to="/login"
                 className="text-sm font-bold text-primary hover:underline"
               >
-                Log In
+                Giriş Yap
               </Link>
             </div>
           </div>

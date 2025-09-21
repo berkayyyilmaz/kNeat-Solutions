@@ -7,7 +7,10 @@ import "./index.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { verifyToken } from "./redux/actions/clientActions";
+import {
+  verifyToken,
+  setupAutoTokenRefresh,
+} from "./redux/actions/clientActions";
 import useScrollToTop from "./hooks/useScrollToTop";
 
 import HomePage from "./pages/HomePage";
@@ -19,6 +22,7 @@ import ContactPage from "./pages/ContactPage";
 import TeamPage from "./pages/TeamPage";
 import AboutPage from "./pages/AboutPage";
 import ScrollToTop from "./components/ScrollToTop";
+import CartPage from "./pages/CartPage";
 
 // Router içinde kullanılacak ana app component'i
 function AppContent() {
@@ -28,14 +32,20 @@ function AppContent() {
   useScrollToTop();
 
   useEffect(() => {
-    // Uygulama başladığında token varsa sessizce doğrula
-    const token = localStorage.getItem("userToken");
-    if (token) {
-      dispatch(verifyToken()).catch(() => {
-        // Hata varsa sessizce geç, kullanıcıyı rahatsız etme
-        console.log("Token doğrulama başarısız");
-      });
-    }
+    //  Uygulama başladığında güvenli token doğrulama
+    import("./utils/secureStorage").then(({ default: SecureStorage }) => {
+      const token = SecureStorage.getToken();
+      if (token) {
+        dispatch(verifyToken())
+          .then(() => {
+            //  Token geçerliyse auto refresh setup yap
+            dispatch(setupAutoTokenRefresh());
+          })
+          .catch(() => {
+            // Hata varsa sessizce geç, kullanıcıyı rahatsız etme
+          });
+      }
+    });
   }, [dispatch]);
 
   return (
@@ -57,6 +67,7 @@ function AppContent() {
         <Route path="/contact" component={ContactPage} />
         <Route path="/team" component={TeamPage} />
         <Route path="/about" component={AboutPage} />
+        <Route path="/cart" component={CartPage} />
       </Switch>
       <ScrollToTop />
     </>

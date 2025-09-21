@@ -2,6 +2,7 @@ import React from "react";
 import { Facebook, Instagram, Twitter } from "lucide-react";
 import { footerInfo } from "../data/footerInfo";
 import InputWithButton from "../components/InputWithButton";
+import { STRINGS } from "../constants/strings";
 
 export default function Footer() {
   return (
@@ -63,14 +64,14 @@ export default function Footer() {
             {/* Newsletter Section */}
             <div className="space-y-4 sm:col-span-2 lg:col-span-2">
               <h5 className="text-lg font-semibold text-gray-900">
-                Get In Touch
+                {STRINGS.FOOTER.NEWSLETTER_TITLE}
               </h5>
               <p className="mb-4 text-sm text-fgray">
-                Subscribe to our newsletter for updates and exclusive offers.
+                {STRINGS.FOOTER.NEWSLETTER_P}
               </p>
               <InputWithButton
-                placeholder="Your Email"
-                buttonText="Subscribe"
+                placeholder={STRINGS.FOOTER.NEWSLETTER_PLACEHOLDER}
+                buttonText={STRINGS.FOOTER.NEWSLETTER_BUTTON}
                 inputClassName="flex-1 min-w-0"
                 buttonClassName="px-6 py-2 bg-primary text-white hover:bg-primary/90 transition-colors"
               />
@@ -88,10 +89,10 @@ export default function Footer() {
               <span className="font-semibold text-primary">
                 kNeat Solutions
               </span>
-              . All rights reserved.
+              . {STRINGS.FOOTER.COPYRIGHT_SUFFIX}
             </p>
             <p className="text-sm text-fgray">
-              Designed & Developed by{" "}
+              {STRINGS.FOOTER.DESIGNED_BY}{" "}
               <a
                 href="https://byilmaz.vercel.app/"
                 target="_blank"
