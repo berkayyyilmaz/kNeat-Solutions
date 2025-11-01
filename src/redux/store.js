@@ -1,12 +1,17 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { createLogger } from "redux-logger";
-import { productApiService, userApiService } from "../services/api";
+import {
+  productApiService,
+  userApiService,
+  addressApiService,
+} from "../services/api";
 
 // Import reducers
 import clientReducer from "./reducers/clientReducer";
 import productReducer from "./reducers/productReducer";
 import shoppingCartReducer from "./reducers/shoppingCartReducer";
 import roleReducer from "./reducers/roleReducer";
+import addressReducer from "./reducers/addressReducer";
 
 // Combine reducers
 const rootReducer = combineReducers({
@@ -14,6 +19,7 @@ const rootReducer = combineReducers({
   products: productReducer,
   shoppingCart: shoppingCartReducer,
   role: roleReducer,
+  address: addressReducer,
 });
 
 // Middleware
@@ -41,7 +47,11 @@ const injectedThunk =
   (next) =>
   (action) => {
     if (typeof action === "function") {
-      return action(dispatch, getState, { productApiService, userApiService });
+      return action(dispatch, getState, {
+        productApiService,
+        userApiService,
+        addressApiService,
+      });
     }
     return next(action);
   };

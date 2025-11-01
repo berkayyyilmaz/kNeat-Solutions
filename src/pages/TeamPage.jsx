@@ -10,7 +10,7 @@ export default function TeamPage() {
       name: "Erhan FIRAT",
       role: "Project Owner",
       image:
-        "https://media.licdn.com/dms/image/v2/D4D03AQGOVSatSpGS4w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1731534956362?e=1759363200&v=beta&t=d5I9DLTzxN5XnvBLulYFR5SHMZbfM3JR4EUoPeoQ5LU",
+        "https://media.licdn.com/dms/image/v2/D4D03AQGOVSatSpGS4w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1731534956362?e=1762387200&v=beta&t=8UJSO7J9uXf_qqiGvEZqaBJ7Wp0zjDAB5ZOtCBGM1fM",
       linkedin: "https://www.linkedin.com/in/erhanfirat/",
       email: "mockmail@gmail.com",
     },
@@ -19,7 +19,7 @@ export default function TeamPage() {
       name: "Gökhan Özdemir",
       role: "Scrum Master",
       image:
-        "https://media.licdn.com/dms/image/v2/C4D03AQE8uHbxXDXfmw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1635783306921?e=1759363200&v=beta&t=I83tV468PbyIJOZ3kMGVuL1GrKec2KAnSngOIF0eZWA",
+        "https://media.licdn.com/dms/image/v2/C4D03AQE8uHbxXDXfmw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1635783306921?e=1762387200&v=beta&t=klrrMdRpISpDy_3tYGNzeKA16W5oi58o5SO4p_NZ5Ro",
       linkedin: "https://www.linkedin.com/in/gnozdemir/",
       email: "mockmail@gmail.com",
     },

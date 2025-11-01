@@ -4,7 +4,12 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import "./index.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import {
@@ -23,6 +28,7 @@ import TeamPage from "./pages/TeamPage";
 import AboutPage from "./pages/AboutPage";
 import ScrollToTop from "./components/ScrollToTop";
 import CartPage from "./pages/CartPage";
+import OrderAddressPage from "./pages/OrderAddressPage";
 
 // Router içinde kullanılacak ana app component'i
 function AppContent() {
@@ -68,11 +74,25 @@ function AppContent() {
         <Route path="/team" component={TeamPage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/cart" component={CartPage} />
+        <ProtectedRoute path="/order/address" component={OrderAddressPage} />
       </Switch>
       <ScrollToTop />
     </>
   );
 }
+
+// ProtectedRoute bileşeni
+const ProtectedRoute = ({ component: Component, ...rest }) => {
+  const isAuthenticated = SecureStorage.getToken(); // Token var mı kontrol et
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        isAuthenticated ? <Component {...props} /> : <Redirect to="/login" />
+      }
+    />
+  );
+};
 
 function App() {
   return (

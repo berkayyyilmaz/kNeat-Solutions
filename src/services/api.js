@@ -5,6 +5,7 @@ import {
   ProductApiService,
   UserApiService,
 } from "./ApiAbstraction";
+import { AddressApiService } from "./AddressApiService";
 
 export const api = axios.create({
   baseURL: "https://workintech-fe-ecommerce.onrender.com",
@@ -34,5 +35,6 @@ ApiFactory.setApiImplementation(axiosImplementation);
 // Domain-specific services
 export const productApiService = new ProductApiService();
 export const userApiService = new UserApiService();
+export const addressApiService = new AddressApiService();
 
 export default api;
